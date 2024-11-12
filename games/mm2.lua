@@ -244,10 +244,13 @@ local espEnabled = false
 local espObjects = {}
 
 -- ///////////// FUNCTION TO CREATE ESP FOR PLAYER /////////////
+-- Table to hold ESP objects for players and GunDrop
+local espObjects = {}
 
--- ///////////// FUNCTION TO CREATE ESP FOR PLAYER /////////////
+-- ///////////// FUNCTION TO CREATE ESP FOR PLAYER AND GUN DROP /////////////
 
 local function CreateESP(player, roleColor, isSpecial)
+    -- Create ESP for the player
     local espGui = Instance.new("BillboardGui", player.Character:FindFirstChild("Head"))
     espGui.Name = "RoleESP"
     espGui.Size = UDim2.new(3, 0, 3, 0)
@@ -276,11 +279,27 @@ local function CreateESP(player, roleColor, isSpecial)
         
         espObjects[player].box = box
     end
+
+    -- Check if GunDrop exists and create its ESP
+    local gunDropPart = workspace:FindFirstChild("GunDrop", true)
+    if gunDropPart and not espObjects["GunDrop"] then
+        local gunDropBox = Instance.new("BoxHandleAdornment")
+        gunDropBox.Adornee = gunDropPart
+        gunDropBox.Size = Vector3.new(3, 3, 3) -- Smaller box size for GunDrop
+        gunDropBox.Color3 = Color3.fromRGB(0, 255, 0) -- Green color
+        gunDropBox.Transparency = 0.4
+        gunDropBox.AlwaysOnTop = true
+        gunDropBox.ZIndex = 10
+        gunDropBox.Parent = gunDropPart
+
+        espObjects["GunDrop"] = gunDropBox
+    end
 end
 
--- ///////////// FUNCTION TO REMOVE ESP /////////////
+-- ///////////// FUNCTION TO REMOVE ESP FOR PLAYER AND GUN DROP /////////////
 
 local function RemoveESP(player)
+    -- Remove ESP for the player
     if espObjects[player] then
         if espObjects[player].espGui then
             espObjects[player].espGui:Destroy()
@@ -290,53 +309,42 @@ local function RemoveESP(player)
         end
         espObjects[player] = nil
     end
-end
 
--- ///////////// FUNCTION TO CREATE ESP FOR GUN DROP /////////////
-
-local gunDropESP -- Variable to store the ESP for GunDrop
-
-local function CreateGunDropESP(gunDropPart)
-    -- Check if GunDrop ESP already exists, to avoid duplicates
-    if gunDropESP then return end
-
-    -- Create a green box around GunDrop
-    local box = Instance.new("BoxHandleAdornment")
-    box.Adornee = gunDropPart
-    box.Size = Vector3.new(3, 3, 3) -- Smaller box size for GunDrop
-    box.Color3 = Color3.fromRGB(0, 255, 0) -- Green color
-    box.Transparency = 0.4
-    box.AlwaysOnTop = true
-    box.ZIndex = 10
-    box.Parent = gunDropPart
-
-    gunDropESP = box
-end
-
--- ///////////// FUNCTION TO REMOVE GUN DROP ESP /////////////
-
-local function RemoveGunDropESP()
-    if gunDropESP then
-        gunDropESP:Destroy()
-        gunDropESP = nil
+    -- Remove ESP for GunDrop if it exists
+    if espObjects["GunDrop"] then
+        espObjects["GunDrop"]:Destroy()
+        espObjects["GunDrop"] = nil
     end
 end
 
--- ///////////// FUNCTION TO CHECK FOR GUN DROP IN WORKSPACE /////////////
+-- ///////////// FUNCTION TO UPDATE ESP FOR GUN DROP IN WORKSPACE /////////////
 
-local function CheckForGunDrop()
-    local gunDropPart = workspace:FindFirstChild("GunDrop", true) -- Searches recursively
+local function UpdateGunDropESP()
+    -- Find GunDrop part in the workspace
+    local gunDropPart = workspace:FindFirstChild("GunDrop", true)
 
-    if gunDropPart then
-        CreateGunDropESP(gunDropPart)
-    else
-        RemoveGunDropESP()
+    -- If GunDrop is found and ESP does not exist, create it
+    if gunDropPart and not espObjects["GunDrop"] then
+        local gunDropBox = Instance.new("BoxHandleAdornment")
+        gunDropBox.Adornee = gunDropPart
+        gunDropBox.Size = Vector3.new(3, 3, 3) -- Smaller box size for GunDrop
+        gunDropBox.Color3 = Color3.fromRGB(0, 255, 0) -- Green color
+        gunDropBox.Transparency = 0.4
+        gunDropBox.AlwaysOnTop = true
+        gunDropBox.ZIndex = 10
+        gunDropBox.Parent = gunDropPart
+
+        espObjects["GunDrop"] = gunDropBox
+    elseif not gunDropPart and espObjects["GunDrop"] then
+        -- If GunDrop no longer exists, remove its ESP
+        espObjects["GunDrop"]:Destroy()
+        espObjects["GunDrop"] = nil
     end
 end
 
--- Call CheckForGunDrop every second to monitor for the presence of GunDrop in workspace
+-- Monitor GunDrop every second to update ESP status
 while true do
-    CheckForGunDrop()
+    UpdateGunDropESP()
     wait(1)
 end
 
