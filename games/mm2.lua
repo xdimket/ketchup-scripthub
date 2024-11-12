@@ -1,7 +1,8 @@
 -- /////////////  INITIALIZE RAYFIELD UI  /////////////
 
+-- First, let's assume Rayfield is already loaded from the previous script.
+-- We're adding the new section and toggle functionality onto the existing UI.
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
 local MainWindow = Rayfield:CreateWindow({
    Name = "Ketchup's Script Hub",
    LoadingTitle = "Scripts",
@@ -27,49 +28,35 @@ local MainWindow = Rayfield:CreateWindow({
       Key = {"Hello"}
    }
 })
-
 -- /////////////  CREATE TABS  /////////////
-
 local MainTab = MainWindow:CreateTab("Main", 4483362458)
 local PlayerTab = MainWindow:CreateTab("Player", 4483362458)
-
 -- /////////////  GENERAL SECTION  /////////////
-
 local GeneralSection = MainTab:CreateSection("General")
-
 local IYButton = MainTab:CreateButton({
    Name = "Infinite Yield",
    Callback = function()
       loadstring(game:HttpGet('https://raw.githubusercontent.com/KeanXR/INF-YIELD/refs/heads/main/v6.0.0'))()
    end,
 })
-
 -- /////////////  DEX SECTION  /////////////
-
 local DexSection = MainTab:CreateSection("Dex")
-
 local DexButton = MainTab:CreateButton({
    Name = "Dex",
    Callback = function()
       loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/DEX-Explorer/main/Mobile.lua"))()
    end,
 })
-
 -- /////////////  REMOTES SECTION  /////////////
-
 local RemotesSection = MainTab:CreateSection("Remotes")
-
 local TurtleSpyButton = MainTab:CreateButton({
    Name = "SolSpy",
    Callback = function()
       loadstring(game:HttpGet("https://raw.githubusercontent.com/xdimket/ketchup-scripthub/refs/heads/main/solspy.lua"))()
    end,
 })
-
 -- /////////////  PLAYER TAB SECTIONS  /////////////
-
 local PlayerSection = PlayerTab:CreateSection("Player")
-
 local WalkSpeedSlider = PlayerTab:CreateSlider({
     Name = "Player WalkSpeed",
     Range = {0, 200},
@@ -81,7 +68,6 @@ local WalkSpeedSlider = PlayerTab:CreateSlider({
         game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
     end,
 })
-
 local JumpPowerSlider = PlayerTab:CreateSlider({
     Name = "Player JumpPower",
     Range = {0, 300},
@@ -93,7 +79,6 @@ local JumpPowerSlider = PlayerTab:CreateSlider({
         game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
     end,
 })
-
 local ResetButton = PlayerTab:CreateButton({
     Name = "Reset WalkSpeed & JumpPower",
     Callback = function()
@@ -103,11 +88,8 @@ local ResetButton = PlayerTab:CreateButton({
         JumpPowerSlider:Set(50)
     end,
 })
-
 -- /////////////  FORCE WALK AND JUMP SPEED TOGGLE  /////////////
-
 local ForceWalkJump = false
-
 local ForceWalkJumpToggle = PlayerTab:CreateToggle({
     Name = "Force Walk and Jump Speed",
     CurrentValue = false,
@@ -126,13 +108,9 @@ local ForceWalkJumpToggle = PlayerTab:CreateToggle({
         end
     end,
 })
-
 -- /////////////  FLYING SECTION  /////////////
-
 local FlyingSection = PlayerTab:CreateSection("Flying")
-
 -- /////////////  FLY SCRIPT SETUP  /////////////
-
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
@@ -142,14 +120,11 @@ local flying = false
 local ctrl = {f = 0, b = 0, l = 0, r = 0}
 local flightSpeed = 50 -- Initial flight speed, can be adjusted with slider
 local mouse = player:GetMouse()
-
 -- Function to update flight speed
 local function UpdateFlightSpeed(newSpeed)
     flightSpeed = newSpeed
 end
-
 -- /////////////  FLY FUNCTION WITHOUT MOVEMENT TILT  /////////////
-
 local function Fly()
     local bg = Instance.new("BodyGyro", torso)
     bg.P = 9e4
@@ -158,28 +133,22 @@ local function Fly()
     local bv = Instance.new("BodyVelocity", torso)
     bv.velocity = Vector3.new(0, 0.1, 0)
     bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-
     repeat wait()
         player.Character.Humanoid.PlatformStand = true
-
         -- Set fixed velocity based on player controls and flight speed
         bv.velocity = ((workspace.CurrentCamera.CFrame.LookVector * (ctrl.f + ctrl.b)) +
                       ((workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, 0, 0).Position) - 
                       workspace.CurrentCamera.CFrame.Position)) * flightSpeed
-
         -- Rotate player to face the direction of the camera
         bg.cframe = workspace.CurrentCamera.CFrame
     until not flying
-
     -- Reset flight settings when stopped
     ctrl = {f = 0, b = 0, l = 0, r = 0}
     bg:Destroy()
     bv:Destroy()
     player.Character.Humanoid.PlatformStand = false
 end
-
 -- /////////////  PLAYER CONTROLS FOR FLY MOVEMENT  /////////////
-
 mouse.KeyDown:Connect(function(key)
     if key:lower() == "w" then ctrl.f = 1
     elseif key:lower() == "s" then ctrl.b = -1
@@ -187,7 +156,6 @@ mouse.KeyDown:Connect(function(key)
     elseif key:lower() == "d" then ctrl.r = 1
     end
 end)
-
 mouse.KeyUp:Connect(function(key)
     if key:lower() == "w" then ctrl.f = 0
     elseif key:lower() == "s" then ctrl.b = 0
@@ -195,9 +163,7 @@ mouse.KeyUp:Connect(function(key)
     elseif key:lower() == "d" then ctrl.r = 0
     end
 end)
-
 -- /////////////  FLY TOGGLE BUTTON  /////////////
-
 local FlightToggle = PlayerTab:CreateToggle({
     Name = "Toggle Flight",
     CurrentValue = false,
@@ -211,9 +177,7 @@ local FlightToggle = PlayerTab:CreateToggle({
         end
     end,
 })
-
 -- /////////////  FLIGHT SPEED SLIDER  /////////////
-
 local FlightSpeedSlider = PlayerTab:CreateSlider({
     Name = "Flight Speed",
     Range = {10, 400},
@@ -225,7 +189,6 @@ local FlightSpeedSlider = PlayerTab:CreateSlider({
         UpdateFlightSpeed(Value)
     end,
 })
-
 local ResetFlightSpeedButton = PlayerTab:CreateButton({
     Name = "Reset Flight Speed",
     Callback = function()
@@ -233,27 +196,22 @@ local ResetFlightSpeedButton = PlayerTab:CreateButton({
         FlightSpeedSlider:Set(50) -- Update the slider to match the reset value
     end,
 })
-
-
-
+-- /////////////////// MM2 /////////////////////
+local MM2Section = MainTab:CreateSection("MM2")
 -- ///////////// ESP VARIABLES /////////////
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local espObjects = {}
 local espEnabled = false
-local espObjects = {}
 
--- ///////////// FUNCTION TO CREATE ESP FOR PLAYER /////////////
--- Table to hold ESP objects for players and GunDrop
-local espObjects = {}
-
--- ///////////// FUNCTION TO CREATE ESP FOR PLAYER AND GUN DROP /////////////
+-- ///////////// FUNCTION TO CREATE ESP FOR PLAYER AND GUNDROP /////////////
 
 local function CreateESP(player, roleColor, isSpecial)
-    -- Create ESP for the player
+    -- Create ESP BillboardGui for player
     local espGui = Instance.new("BillboardGui", player.Character:FindFirstChild("Head"))
     espGui.Name = "RoleESP"
-    espGui.Size = UDim2.new(3, 0, 3, 0)
+    espGui.Size = UDim2.new(3, 0, 3, 0)  -- Increased size for larger text
     espGui.AlwaysOnTop = true
 
     local label = Instance.new("TextLabel", espGui)
@@ -267,6 +225,7 @@ local function CreateESP(player, roleColor, isSpecial)
 
     espObjects[player] = {espGui = espGui}
 
+    -- If the player is a special role, create a box around them
     if isSpecial then
         local box = Instance.new("BoxHandleAdornment")
         box.Adornee = player.Character:FindFirstChild("HumanoidRootPart")
@@ -274,13 +233,12 @@ local function CreateESP(player, roleColor, isSpecial)
         box.Color3 = roleColor
         box.Transparency = 0.4
         box.AlwaysOnTop = true
-        box.ZIndex = 10
         box.Parent = player.Character:FindFirstChild("HumanoidRootPart")
         
         espObjects[player].box = box
     end
 
-    -- Check if GunDrop exists and create its ESP
+    -- Check if GunDrop exists in the workspace and create a green box around it if found
     local gunDropPart = workspace:FindFirstChild("GunDrop", true)
     if gunDropPart and not espObjects["GunDrop"] then
         local gunDropBox = Instance.new("BoxHandleAdornment")
@@ -289,17 +247,16 @@ local function CreateESP(player, roleColor, isSpecial)
         gunDropBox.Color3 = Color3.fromRGB(0, 255, 0) -- Green color
         gunDropBox.Transparency = 0.4
         gunDropBox.AlwaysOnTop = true
-        gunDropBox.ZIndex = 10
         gunDropBox.Parent = gunDropPart
 
         espObjects["GunDrop"] = gunDropBox
     end
 end
 
--- ///////////// FUNCTION TO REMOVE ESP FOR PLAYER AND GUN DROP /////////////
+-- ///////////// FUNCTION TO REMOVE ESP FOR PLAYER AND GUNDROP /////////////
 
 local function RemoveESP(player)
-    -- Remove ESP for the player
+    -- Remove ESP for player
     if espObjects[player] then
         if espObjects[player].espGui then
             espObjects[player].espGui:Destroy()
@@ -317,37 +274,6 @@ local function RemoveESP(player)
     end
 end
 
--- ///////////// FUNCTION TO UPDATE ESP FOR GUN DROP IN WORKSPACE /////////////
-
-local function UpdateGunDropESP()
-    -- Find GunDrop part in the workspace
-    local gunDropPart = workspace:FindFirstChild("GunDrop", true)
-
-    -- If GunDrop is found and ESP does not exist, create it
-    if gunDropPart and not espObjects["GunDrop"] then
-        local gunDropBox = Instance.new("BoxHandleAdornment")
-        gunDropBox.Adornee = gunDropPart
-        gunDropBox.Size = Vector3.new(3, 3, 3) -- Smaller box size for GunDrop
-        gunDropBox.Color3 = Color3.fromRGB(0, 255, 0) -- Green color
-        gunDropBox.Transparency = 0.4
-        gunDropBox.AlwaysOnTop = true
-        gunDropBox.ZIndex = 10
-        gunDropBox.Parent = gunDropPart
-
-        espObjects["GunDrop"] = gunDropBox
-    elseif not gunDropPart and espObjects["GunDrop"] then
-        -- If GunDrop no longer exists, remove its ESP
-        espObjects["GunDrop"]:Destroy()
-        espObjects["GunDrop"] = nil
-    end
-end
-
--- Monitor GunDrop every second to update ESP status
-while true do
-    UpdateGunDropESP()
-    wait(1)
-end
-
 -- ///////////// FUNCTION TO CHECK PLAYER ROLES /////////////
 
 local function CheckPlayerRoles()
@@ -356,6 +282,7 @@ local function CheckPlayerRoles()
             local roleColor = Color3.fromRGB(128, 128, 128) -- Default to grey for innocent
             local isSpecial = false
 
+            -- Check backpack and character tools for role items
             local hasGun = player.Backpack:FindFirstChild("Gun") or player.Character:FindFirstChild("Gun")
             local hasKnife = player.Backpack:FindFirstChild("Knife") or player.Character:FindFirstChild("Knife")
 
@@ -367,6 +294,7 @@ local function CheckPlayerRoles()
                 isSpecial = true
             end
 
+            -- Update or create ESP based on role color and special status
             if espObjects[player] then
                 espObjects[player].espGui.TextLabel.TextColor3 = roleColor
                 if espObjects[player].box then
@@ -376,76 +304,51 @@ local function CheckPlayerRoles()
                 CreateESP(player, roleColor, isSpecial)
             end
         else
+            -- Remove ESP if character or head is missing
             RemoveESP(player)
         end
     end
 end
 
--- ///////////// TOGGLE ESP BUTTON /////////////
-local MM2Tab = MainWindow:CreateTab("MM2", 4483362458)
+-- ///////////// FUNCTION TO ENABLE AND DISABLE ESP /////////////
 
-local ESPSection = MM2Tab:CreateSection("ESP")
+local function EnableESP()
+    espEnabled = true
+    -- Continuously update roles if ESP is enabled
+    while espEnabled do
+        CheckPlayerRoles()
+        wait(1)
+    end
+end
 
-local ESPToggle = MM2Tab:CreateToggle({
-    Name = "Toggle ESP",
-    CurrentValue = false,
-    Flag = "ESPToggle",
-    Callback = function(Value)
-        espEnabled = Value
-        if espEnabled then
-            CheckPlayerRoles()
-            while espEnabled do
-                CheckPlayerRoles()
-                wait(1)
+local function DisableESP()
+    espEnabled = false
+    -- Remove all ESP when toggling off
+    for _, esp in pairs(espObjects) do
+        if esp.espGui then esp.espGui:Destroy() end
+        if esp.box then esp.box:Destroy() end
+    end
+    espObjects = {}
+end
+
+-- ///////////// ADDING TO EXISTING UI (Rayfield) /////////////
+if MainTab then
+    local MM2Section = MainTab:CreateSection("Murder Mystery 2")
+    local ToggleESPToggle = MainTab:CreateToggle({
+        Name = "Toggle MM2 ESP",
+        CurrentValue = false,
+        Flag = "MM2_ESP_Toggle",
+        Callback = function(Value)
+            espEnabled = Value
+            if espEnabled then
+                print("MM2 ESP Enabled")
+                EnableESP()
+            else
+                print("MM2 ESP Disabled")
+                DisableESP()
             end
-        else
-            for _, esp in pairs(espObjects) do
-                if esp.espGui then esp.espGui:Destroy() end
-                if esp.box then esp.box:Destroy() end
-            end
-            espObjects = {}
-        end
-    end,
-})
--- ///////////// TELEPORT COINS SECTION /////////////
-
--- ///////////// COIN COLLECTION SECTION /////////////
-
-local MiscSection = MM2Tab:CreateSection("Misc")
-
--- Input box to type in the map name
-local MapNameInput = MM2Tab:CreateInput({
-    Name = "Enter Map Name",
-    CurrentValue = "",
-    PlaceholderText = "Map Name (e.g., Bank2)",
-    RemoveTextAfterFocusLost = false,
-    Flag = "MapNameInput",
-    Callback = function(Text)
-        _G.MapName = Text -- Store the input map name in a global variable for access
-    end,
-})
-
--- Button to collect all coins in the specified map
-local SimulateTouchButton = MM2Tab:CreateButton({
-    Name = "Simulate Touch on GunDrop",
-    Callback = function()
-        -- Make sure the player has entered a map name
-        if not _G.MapName or _G.MapName == "" then
-            print("Please enter a map name in the input box.")
-            return
-        end
-
-        -- Attempt to access the "GunDrop" part within the specified map
-        local gunDropPart = workspace:FindFirstChild(_G.MapName)
-            and workspace[_G.MapName]:FindFirstChild("GunDrop")
-
-        if gunDropPart and gunDropPart:FindFirstChild("TouchInterest") then
-            -- Simulate touching the "GunDrop" part
-            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, gunDropPart, 0) -- Start touch
-            wait(0.1) -- Slight delay to ensure the touch is registered
-            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, gunDropPart, 1) -- End touch
-        else
-            print("Could not find 'GunDrop' with 'TouchInterest' in the specified map.")
-        end
-    end,
-})
+        end,
+    })
+else
+    print("Error: MainTab is not available. Ensure Rayfield UI is loaded properly.")
+end
