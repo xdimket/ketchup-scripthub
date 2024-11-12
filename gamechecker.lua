@@ -14,7 +14,7 @@ local function loadGameScript()
         loadstring(game:HttpGet('https://example.com/'))()
 
     else
-        print("Running default script")
+        print("Unsupported Game")
         loadstring(game:HttpGet('https://example.com/default-script'))()
     end
 end
