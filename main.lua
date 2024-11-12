@@ -235,3 +235,6 @@ local ResetFlightSpeedButton = PlayerTab:CreateButton({
         FlightSpeedSlider:Set(50) -- Update the slider to match the reset value
     end,
 })
+
+-- //////////// CHECK GAME AND LOAD SCRIPT //////////////
+loadstring(game:HttpGet('https://raw.githubusercontent.com/xdimket/ketchup-scripthub/refs/heads/main/gamechecker.lua'))()
