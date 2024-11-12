@@ -30,7 +30,7 @@ local MainWindow = Rayfield:CreateWindow({
 
 -- /////////////  CREATE TABS  /////////////
 
-local MainTab = MainWindow:CreateTab("Scripting", 4483362458) -- Renamed here
+local MainTab = MainWindow:CreateTab("Main", 4483362458) -- Renamed here
 local PlayerTab = MainWindow:CreateTab("Player", 4483362458)
 
 -- /////////////  GENERAL SECTION  /////////////
