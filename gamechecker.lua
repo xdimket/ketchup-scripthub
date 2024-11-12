@@ -1,33 +1,23 @@
--- /////////////  CHECK GAME ID AND RUN SCRIPT BASED ON ID /////////////
+-- This script will check the game PlaceId and execute a loadstring depending on it
 
 local gameId = game.PlaceId
 
--- Debug function to log errors
-local function safeLoadScript(url)
-    local success, result = pcall(function()
-        return loadstring(game:HttpGet(url))()
-    end)
-    if not success then
-        print("Error loading script from URL: " .. url)
-        print("Error details: " .. result)
-    end
-end
-
-local function loadGameScript()
-    print("Checking game ID: " .. gameId)
-
-    if gameId == 142823291 then -- Murder Mystery 2 (MM2)
-        print("Running script for Murder Mystery")
-        safeLoadScript('https://raw.githubusercontent.com/xdimket/ketchup-scripthub/refs/heads/main/games/mm2.lua')
-
-    elseif gameId == 123456789 then  -- Replace with a valid game ID (example)
-        print("Running script for another game")
-        safeLoadScript('https://example.com/')
-
+-- Function to execute the corresponding loadstring based on the game PlaceId
+local function RunGameScript()
+    if gameId == 142823291 then  -- Murder Mystery 2 (MM2)
+        -- Load Murder Mystery 2 specific script
+        print("Running Murder Mystery 2 script")
+        loadstring(game:HttpGet(""))()  -- Example, can be replaced with MM2-specific script
+    elseif gameId == 123456789 then  -- Another game (replace with real ID)
+        -- Load custom script for this game
+        print("Running Another Game script")
+        loadstring(game:HttpGet("https://example.com/custom-script"))()  -- Example, replace with actual URL or script
     else
-        print("Unsupported Game")
-        safeLoadScript('https://example.com/default-script')
+        -- Default script for any other game
+        print("Running Default Script")
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/KeanXR/INF-YIELD/refs/heads/main/v6.0.0"))()  -- Example, can be replaced with default script
     end
 end
 
-loadGameScript()
+-- Run the script
+RunGameScript()
