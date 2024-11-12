@@ -333,8 +333,8 @@ end
 
 -- ///////////// ADDING TO EXISTING UI (Rayfield) /////////////
 if MainTab then
-    local MM2Section = MainTab:CreateSection("Murder Mystery 2")
-    local ToggleESPToggle = MainTab:CreateToggle({
+    local MM2Tab = MainWindow:CreateTab("Murder Mystery 2")
+    local ToggleESPToggle = MM2Tab:CreateToggle({
         Name = "Toggle MM2 ESP",
         CurrentValue = false,
         Flag = "MM2_ESP_Toggle",
