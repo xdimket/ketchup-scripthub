@@ -332,7 +332,7 @@ local function DisableESP()
 end
 
 -- ///////////// ADDING TO EXISTING UI (Rayfield) /////////////
-if MainTab then
+if MainWindow then
     local MM2Tab = MainWindow:CreateTab("Murder Mystery 2")
     local ToggleESPToggle = MM2Tab:CreateToggle({
         Name = "Toggle MM2 ESP",
@@ -350,5 +350,5 @@ if MainTab then
         end,
     })
 else
-    print("Error: MainTab is not available. Ensure Rayfield UI is loaded properly.")
+    print("Error: MainWindow is not available. Ensure Rayfield UI is loaded properly.")
 end
