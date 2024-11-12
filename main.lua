@@ -3,13 +3,13 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local MainWindow = Rayfield:CreateWindow({
-   Name = "Mobile Script Hub",
+   Name = "Ketchup's Script Hub",
    LoadingTitle = "Scripts",
    LoadingSubtitle = "by ketchup",
    ConfigurationSaving = {
       Enabled = false,
       FolderName = nil,
-      FileName = "Big Hub"
+      FileName = "Ketchup Hub"
    },
    Discord = {
       Enabled = false,
@@ -30,14 +30,14 @@ local MainWindow = Rayfield:CreateWindow({
 
 -- /////////////  CREATE TABS  /////////////
 
-local ScriptingTab = MainWindow:CreateTab("Scripting", 4483362458)
+local MainTab = MainWindow:CreateTab("Scripting", 4483362458) -- Renamed here
 local PlayerTab = MainWindow:CreateTab("Player", 4483362458)
 
 -- /////////////  GENERAL SECTION  /////////////
 
-local GeneralSection = ScriptingTab:CreateSection("General")
+local GeneralSection = MainTab:CreateSection("General") -- Renamed here
 
-local IYButton = ScriptingTab:CreateButton({
+local IYButton = MainTab:CreateButton({
    Name = "Infinite Yield",
    Callback = function()
       loadstring(game:HttpGet('https://raw.githubusercontent.com/KeanXR/INF-YIELD/refs/heads/main/v6.0.0'))()
@@ -46,9 +46,9 @@ local IYButton = ScriptingTab:CreateButton({
 
 -- /////////////  DEX SECTION  /////////////
 
-local DexSection = ScriptingTab:CreateSection("Dex")
+local DexSection = MainTab:CreateSection("Dex") -- Renamed here
 
-local DexButton = ScriptingTab:CreateButton({
+local DexButton = MainTab:CreateButton({
    Name = "Dex",
    Callback = function()
       loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/DEX-Explorer/main/Mobile.lua"))()
@@ -57,9 +57,9 @@ local DexButton = ScriptingTab:CreateButton({
 
 -- /////////////  REMOTES SECTION  /////////////
 
-local RemotesSection = ScriptingTab:CreateSection("Remotes")
+local RemotesSection = MainTab:CreateSection("Remotes") -- Renamed here
 
-local TurtleSpyButton = ScriptingTab:CreateButton({
+local TurtleSpyButton = MainTab:CreateButton({
    Name = "TurtleSpy",
    Callback = function()
       loadstring(game:HttpGet("https://raw.githubusercontent.com/Turtle-Brand/Turtle-Spy/main/source.lua", true))()
@@ -164,7 +164,7 @@ local function Fly()
 
         -- Set fixed velocity based on player controls and flight speed
         bv.velocity = ((workspace.CurrentCamera.CFrame.LookVector * (ctrl.f + ctrl.b)) +
-                      ((workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, 0, 0).Position) -
+                      ((workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, 0, 0).Position) - 
                       workspace.CurrentCamera.CFrame.Position)) * flightSpeed
 
         -- Rotate player to face the direction of the camera
@@ -235,6 +235,3 @@ local ResetFlightSpeedButton = PlayerTab:CreateButton({
         FlightSpeedSlider:Set(50) -- Update the slider to match the reset value
     end,
 })
-
--- //////////// CHECK GAME AND LOAD SCRIPT //////////////
-loadstring(game:HttpGet('https://raw.githubusercontent.com/xdimket/ketchup-scripthub/refs/heads/main/gamechecker.lua'))()
