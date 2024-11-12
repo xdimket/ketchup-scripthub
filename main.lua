@@ -60,9 +60,9 @@ local DexButton = MainTab:CreateButton({
 local RemotesSection = MainTab:CreateSection("Remotes") -- Renamed here
 
 local TurtleSpyButton = MainTab:CreateButton({
-   Name = "TurtleSpy",
+   Name = "SolSpy",
    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/Turtle-Brand/Turtle-Spy/main/source.lua", true))()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/xdimket/ketchup-scripthub/refs/heads/main/solspy.lua"))()
    end,
 })
 
