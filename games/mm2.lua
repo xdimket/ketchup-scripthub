@@ -234,8 +234,7 @@ local ResetFlightSpeedButton = PlayerTab:CreateButton({
     end,
 })
 
---///////////////////MM2/////////////////////
-local MM2Section = MainTab:CreateSection("MM2")
+
 
 -- ///////////// ESP VARIABLES /////////////
 
@@ -325,9 +324,11 @@ local function CheckPlayerRoles()
 end
 
 -- ///////////// TOGGLE ESP BUTTON /////////////
+local MM2Tab = MainWindow:CreateTab("MM2", 4483362458)
 
+local ESPSection = MM2Tab:CreateSection("ESP")
 
-local ESPToggle = MainTab:CreateToggle({
+local ESPToggle = MM2Tab:CreateToggle({
     Name = "Toggle ESP",
     CurrentValue = false,
     Flag = "ESPToggle",
@@ -345,6 +346,48 @@ local ESPToggle = MainTab:CreateToggle({
                 if esp.box then esp.box:Destroy() end
             end
             espObjects = {}
+        end
+    end,
+})
+-- ///////////// TELEPORT COINS SECTION /////////////
+
+-- ///////////// COIN COLLECTION SECTION /////////////
+
+local MiscSection = MM2Tab:CreateSection("Misc")
+
+-- Input box to type in the map name
+local MapNameInput = MM2Tab:CreateInput({
+    Name = "Enter Map Name",
+    CurrentValue = "",
+    PlaceholderText = "Map Name (e.g., Bank2)",
+    RemoveTextAfterFocusLost = false,
+    Flag = "MapNameInput",
+    Callback = function(Text)
+        _G.MapName = Text -- Store the input map name in a global variable for access
+    end,
+})
+
+-- Button to collect all coins in the specified map
+local SimulateTouchButton = MM2Tab:CreateButton({
+    Name = "Simulate Touch on GunDrop",
+    Callback = function()
+        -- Make sure the player has entered a map name
+        if not _G.MapName or _G.MapName == "" then
+            print("Please enter a map name in the input box.")
+            return
+        end
+
+        -- Attempt to access the "GunDrop" part within the specified map
+        local gunDropPart = workspace:FindFirstChild(_G.MapName)
+            and workspace[_G.MapName]:FindFirstChild("GunDrop")
+
+        if gunDropPart and gunDropPart:FindFirstChild("TouchInterest") then
+            -- Simulate touching the "GunDrop" part
+            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, gunDropPart, 0) -- Start touch
+            wait(0.1) -- Slight delay to ensure the touch is registered
+            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, gunDropPart, 1) -- End touch
+        else
+            print("Could not find 'GunDrop' with 'TouchInterest' in the specified map.")
         end
     end,
 })
