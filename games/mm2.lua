@@ -245,6 +245,8 @@ local espObjects = {}
 
 -- ///////////// FUNCTION TO CREATE ESP FOR PLAYER /////////////
 
+-- ///////////// FUNCTION TO CREATE ESP FOR PLAYER /////////////
+
 local function CreateESP(player, roleColor, isSpecial)
     local espGui = Instance.new("BillboardGui", player.Character:FindFirstChild("Head"))
     espGui.Name = "RoleESP"
@@ -288,6 +290,54 @@ local function RemoveESP(player)
         end
         espObjects[player] = nil
     end
+end
+
+-- ///////////// FUNCTION TO CREATE ESP FOR GUN DROP /////////////
+
+local gunDropESP -- Variable to store the ESP for GunDrop
+
+local function CreateGunDropESP(gunDropPart)
+    -- Check if GunDrop ESP already exists, to avoid duplicates
+    if gunDropESP then return end
+
+    -- Create a green box around GunDrop
+    local box = Instance.new("BoxHandleAdornment")
+    box.Adornee = gunDropPart
+    box.Size = Vector3.new(3, 3, 3) -- Smaller box size for GunDrop
+    box.Color3 = Color3.fromRGB(0, 255, 0) -- Green color
+    box.Transparency = 0.4
+    box.AlwaysOnTop = true
+    box.ZIndex = 10
+    box.Parent = gunDropPart
+
+    gunDropESP = box
+end
+
+-- ///////////// FUNCTION TO REMOVE GUN DROP ESP /////////////
+
+local function RemoveGunDropESP()
+    if gunDropESP then
+        gunDropESP:Destroy()
+        gunDropESP = nil
+    end
+end
+
+-- ///////////// FUNCTION TO CHECK FOR GUN DROP IN WORKSPACE /////////////
+
+local function CheckForGunDrop()
+    local gunDropPart = workspace:FindFirstChild("GunDrop", true) -- Searches recursively
+
+    if gunDropPart then
+        CreateGunDropESP(gunDropPart)
+    else
+        RemoveGunDropESP()
+    end
+end
+
+-- Call CheckForGunDrop every second to monitor for the presence of GunDrop in workspace
+while true do
+    CheckForGunDrop()
+    wait(1)
 end
 
 -- ///////////// FUNCTION TO CHECK PLAYER ROLES /////////////
