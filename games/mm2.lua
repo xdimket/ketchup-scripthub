@@ -118,28 +118,30 @@ end
 
 -- ///////////// ADDING TO EXISTING UI (Rayfield) /////////////
 
--- Assuming `MainTab` already exists from previous script, we'll add a new section and button under it.
-local MM2Section = MainTab:CreateSection("Murder Mystery 2")
+-- Check if MainTab exists
+if MainTab then
+    -- Assuming `MainTab` already exists from the previous script, we'll add a new section and button under it.
+    local MM2Section = MainTab:CreateSection("Murder Mystery 2")
 
--- Toggle button for ESP in Murder Mystery 2 section
-local ToggleESPToggle = MainTab:CreateToggle({
-    Name = "Toggle MM2 ESP",
-    CurrentValue = false,
-    Flag = "MM2_ESP_Toggle",
-    Callback = function(Value)
-        espEnabled = Value
+    -- Toggle button for ESP in Murder Mystery 2 section
+    local ToggleESPToggle = MainTab:CreateToggle({
+        Name = "Toggle MM2 ESP",
+        CurrentValue = false,
+        Flag = "MM2_ESP_Toggle",
+        Callback = function(Value)
+            espEnabled = Value
 
-        if espEnabled then
-            print("MM2 ESP Enabled")
-            -- Run the ESP script when enabled
-            EnableESP()
-        else
-            print("MM2 ESP Disabled")
-            -- Stop the ESP when disabled
-            DisableESP()
-        end
-    end,
-})
-
--- This script should now be able to run alongside your existing Rayfield UI,
--- creating a new section called "Murder Mystery 2" and a toggle button to control ESP.
+            if espEnabled then
+                print("MM2 ESP Enabled")
+                -- Run the ESP script when enabled
+                EnableESP()
+            else
+                print("MM2 ESP Disabled")
+                -- Stop the ESP when disabled
+                DisableESP()
+            end
+        end,
+    })
+else
+    print("Error: MainTab is not available. Ensure Rayfield UI is loaded properly.")
+end
