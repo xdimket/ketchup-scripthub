@@ -2,20 +2,31 @@
 
 local gameId = game.PlaceId
 
+-- Debug function to log errors
+local function safeLoadScript(url)
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet(url))()
+    end)
+    if not success then
+        print("Error loading script from URL: " .. url)
+        print("Error details: " .. result)
+    end
+end
 
 local function loadGameScript()
+    print("Checking game ID: " .. gameId)
 
     if gameId == 142823291 then -- Murder Mystery 2 (MM2)
         print("Running script for Murder Mystery")
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/xdimket/ketchup-scripthub/refs/heads/main/games/mm2.lua'))()
+        safeLoadScript('https://raw.githubusercontent.com/xdimket/ketchup-scripthub/refs/heads/main/games/mm2.lua')
 
-    elseif gameId == 000000000 then
-        print("Running script for ")
-        loadstring(game:HttpGet('https://example.com/'))()
+    elseif gameId == 123456789 then  -- Replace with a valid game ID (example)
+        print("Running script for another game")
+        safeLoadScript('https://example.com/')
 
     else
         print("Unsupported Game")
-        loadstring(game:HttpGet('https://example.com/default-script'))()
+        safeLoadScript('https://example.com/default-script')
     end
 end
 
