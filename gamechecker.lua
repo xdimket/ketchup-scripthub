@@ -7,7 +7,7 @@ local function loadGameScript()
 
     if gameId == 142823291 then -- Murder Mystery 2 (MM2)
         print("Running script for Murder Mystery")
-        loadstring(game:HttpGet('https://example.com/murder-mystery-script'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/xdimket/ketchup-scripthub/refs/heads/main/games/mm2.lua'))()
 
     elseif gameId == 000000000 then
         print("Running script for ")
