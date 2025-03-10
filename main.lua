@@ -66,6 +66,85 @@ local TurtleSpyButton = MainTab:CreateButton({
    end,
 })
 
+-- /////////////  SERVER JOINER SECTION  /////////////
+
+local ServerSection = MainTab:CreateSection("Server Joiner")
+
+-- Initialize TeleportService for server joining
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Create input for Job ID
+local JobIDInput = MainTab:CreateInput({
+   Name = "Server Job ID",
+   PlaceholderText = "Enter server JobID here...",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(Text)
+      -- Store the text but don't join yet
+   end,
+})
+
+-- Create a button to join server by JobID
+local JoinServerButton = MainTab:CreateButton({
+   Name = "Join Server",
+   Callback = function()
+      local jobId = JobIDInput.CurrentValue
+      jobId = jobId:gsub("[\n\r]", ""):gsub("%s+", "")
+      if jobId and jobId ~= "" then
+         Rayfield:Notify({
+            Title = "Server Joiner",
+            Content = "Attempting to join server...",
+            Duration = 3,
+            Image = 4483362458
+         })
+         
+         -- Get the current place ID
+         local placeId = game.PlaceId
+         
+         -- Using pcall to handle any errors
+         local success, errorMsg = pcall(function()
+            TeleportService:TeleportToPlaceInstance(placeId, jobId, LocalPlayer)
+         end)
+         
+         if not success then
+            Rayfield:Notify({
+               Title = "Error",
+               Content = "Failed to join: " .. tostring(errorMsg),
+               Duration = 5,
+               Image = 4483362458
+            })
+         end
+      else
+         Rayfield:Notify({
+            Title = "Error",
+            Content = "Please enter a valid JobID",
+            Duration = 3,
+            Image = 4483362458
+         })
+      end
+   end,
+})
+
+-- Create a button to copy current server's JobID
+local GetCurrentJobIDButton = MainTab:CreateButton({
+   Name = "Copy Current JobID",
+   Callback = function()
+      local currentJobId = game.JobId
+      
+      -- Set the input field to the current JobID
+      JobIDInput:Set(currentJobId)
+      
+      -- Notify the user
+      Rayfield:Notify({
+         Title = "Current JobID",
+         Content = "Current JobID copied: " .. currentJobId,
+         Duration = 5,
+         Image = 4483362458
+      })
+   end,
+})
+
 -- /////////////  PLAYER TAB SECTIONS  /////////////
 
 local PlayerSection = PlayerTab:CreateSection("Player")
@@ -235,4 +314,3 @@ local ResetFlightSpeedButton = PlayerTab:CreateButton({
         FlightSpeedSlider:Set(50) -- Update the slider to match the reset value
     end,
 })
-
