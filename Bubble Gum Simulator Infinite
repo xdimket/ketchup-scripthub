@@ -329,77 +329,75 @@ local BGSI = MainWindow:CreateTab("BGSI", 4483362458)
 local AccessSection = BGSI:CreateSection("Access")
 local AutoFarmSection = BGSI:CreateSection("AutoFarm")
 
--- First, verify that BGSI exists and is properly initialized
-if not BGSI then
-    warn("BGSI is nil. Make sure it's properly required before using it.")
-    return
-end
-
--- Try creating the toggle with error handling
-local PickupToggle
-local success, err = pcall(function()
-    PickupToggle = BGSI:CreateToggle({
-        Name = "AutoFarm Pickups",
-        CurrentValue = false,
-        Flag = "AutoFarmPickups",
-        Callback = function(Value)
-            -- Set the global variable based on toggle state
-            _G.collectingPickups = Value
-            
-            -- If enabled, start the collection script
-            if Value then
-                spawn(function()
-                    -- UUID validation function
-                    local function isUUID(str)
-                        local pattern = "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$"
-                        return string.match(str, pattern) ~= nil
-                    end
-                    
-                    while _G.collectingPickups do
-                        local targetParent = nil
-                        for _, folder in ipairs(workspace:GetDescendants()) do
-                            if folder:IsA("Folder") and folder.Name == "Chunker" then
-                                for _, child in ipairs(folder:GetChildren()) do
-                                    if isUUID(child.Name) then
-                                        targetParent = folder
-                                        break
-                                    end
-                                end
-                                if targetParent then break end
-                            end
-                        end
-
-                        if targetParent then
-                            for _, pickup in ipairs(targetParent:GetChildren()) do
-                                if pickup:IsA("BasePart") or pickup:IsA("Model") then
-                                    local args = {
-                                        [1] = pickup.Name 
-                                    }
-                                    game:GetService("ReplicatedStorage")
-                                        :WaitForChild("Remotes")
-                                        :WaitForChild("Pickups")
-                                        :WaitForChild("CollectPickup")
-                                        :FireServer(unpack(args))
-                                    pickup:Destroy()
-                                end
-                            end
-                        else
-                            warn("No Chunker folder found with UUID-style children.")
-                        end
-                        wait(5)
-                    end
-                end)
+local PickupToggle = BGSI:CreateToggle({
+   Name = "AutoFarm Pickups",
+   CurrentValue = false,
+   Flag = "AutoFarmPickups",
+   Callback = function(Value)
+      -- Set the global variable based on toggle state
+      _G.collectingPickups = Value
+      
+      -- If enabled, start the collection script
+      if Value then
+         spawn(function()
+            -- Move the isUUID function inside to ensure it's available
+            local function isUUID(str)
+               local pattern = "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$"
+               return type(str) == "string" and string.match(str, pattern) ~= nil
             end
-        end,
-    })
-end)
+            
+            -- Main collection loop with error handling
+            while _G.collectingPickups do
+               local success, errorMsg = pcall(function()
+                  local targetParent = nil
+                  -- Look for the Chunker folder with UUID children
+                  for _, folder in ipairs(workspace:GetDescendants()) do
+                     if folder:IsA("Folder") and folder.Name == "Chunker" then
+                        for _, child in ipairs(folder:GetChildren()) do
+                           if child and child.Name and isUUID(child.Name) then
+                              targetParent = folder
+                              break
+                           end
+                        end
+                        if targetParent then break end
+                     end
+                  end
 
-if not success then
-    warn("Failed to create toggle:", err)
-end
-
--- UUID validation function
-local function isUUID(str)
-   local pattern = "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$"
-   return string.match(str, pattern) ~= nil
-end
+                  -- Process pickups if found
+                  if targetParent then
+                     for _, pickup in ipairs(targetParent:GetChildren()) do
+                        if pickup and (pickup:IsA("BasePart") or pickup:IsA("Model")) then
+                           local args = {
+                              [1] = pickup.Name 
+                           }
+                           
+                           -- Safe server call
+                           local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+                           if remotes then
+                              local pickups = remotes:FindFirstChild("Pickups")
+                              if pickups then
+                                 local collectPickup = pickups:FindFirstChild("CollectPickup")
+                                 if collectPickup then
+                                    collectPickup:FireServer(unpack(args))
+                                    pickup:Destroy()
+                                 end
+                              end
+                           end
+                        end
+                     end
+                  else
+                     warn("No Chunker folder found with UUID-style children.")
+                  end
+               end)
+               
+               -- Log any errors
+               if not success then
+                  warn("Error in pickup collection: " .. tostring(errorMsg))
+               end
+               
+               wait(5)
+            end
+         end)
+      end
+   end,
+})
