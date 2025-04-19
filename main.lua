@@ -1,8 +1,8 @@
 -- /////////////  INITIALIZE RAYFIELD UI  /////////////
 
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+__Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local MainWindow = Rayfield:CreateWindow({
+__MainWindow = Rayfield:CreateWindow({
    Name = "Ketchup's Script Hub",
    LoadingTitle = "Scripts",
    LoadingSubtitle = "by ketchup",
