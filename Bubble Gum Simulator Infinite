@@ -51,7 +51,7 @@ local DexSection = MainTab:CreateSection("Dex") -- Renamed here
 local DexButton = MainTab:CreateButton({
    Name = "Dex",
    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/AlterX404/DarkDEX-V5/refs/heads/main/DarkDEX-V5"))()
+      loadstring(game:HttpGet("loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()"))()
    end,
 })
 
