@@ -333,14 +333,15 @@ local WheelSpinToggle = BGSI:CreateToggle({
    CurrentValue = false,
    Flag = "WheelSpinVisibility",
    Callback = function(Value)
-      -- Direct path to the WheelSpin element
       local wheelSpin = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WheelSpin
-      
-      -- Set the Visible property
-      wheelSpin.Visible = Value
-      print("WheelSpin visibility set to: " .. tostring(Value))
+      if wheelSpin.Visible == true then
+         wheelSpin.Visible = false
+      else
+         wheelSpin.Visible = true
+      end
    end,
 })
+
 
 local AutoFarmSection = BGSI:CreateSection("AutoFarm")
 
