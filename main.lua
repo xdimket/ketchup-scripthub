@@ -51,7 +51,7 @@ local DexSection = MainTab:CreateSection("Dex") -- Renamed here
 local DexButton = MainTab:CreateButton({
    Name = "Dex",
    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/DEX-Explorer/main/Mobile.lua"))()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/AlterX404/DarkDEX-V5/refs/heads/main/DarkDEX-V5"))()
    end,
 })
 
@@ -59,10 +59,10 @@ local DexButton = MainTab:CreateButton({
 
 local RemotesSection = MainTab:CreateSection("Remotes") -- Renamed here
 
-local TurtleSpyButton = MainTab:CreateButton({
-   Name = "SolSpy",
+local RSpyButton = MainTab:CreateButton({
+   Name = "RSpy",
    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/xdimket/ketchup-scripthub/refs/heads/main/solspy.lua"))()
+      loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpyBeta.lua"))()
    end,
 })
 
