@@ -327,6 +327,9 @@ local ResetFlightSpeedButton = PlayerTab:CreateButton({
 
 local BGSI = MainWindow:CreateTab("BGSI", 4483362458)
 local AccessSection = BGSI:CreateSection("Access")
+
+
+
 local AutoFarmSection = BGSI:CreateSection("AutoFarm")
 
 local PickupToggle = BGSI:CreateToggle({
@@ -400,4 +403,27 @@ local PickupToggle = BGSI:CreateToggle({
          end)
       end
    end,
+})
+
+local BubbleToggle = BGSI:CreateToggle({
+  Name = "AutoFarm Bubbles",
+  CurrentValue = false,
+  Flag = "AutoFarmBubbles",
+  Callback = function(Value)
+     -- Set the global variable based on toggle state
+     _G.blowingBubbles = Value
+     
+     -- If enabled, start the bubble blowing script
+     if Value then
+        spawn(function()
+           while _G.blowingBubbles do
+              local args = {
+                 "BlowBubble"
+              }
+              game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer(unpack(args))
+              wait(0.5)
+           end
+        end)
+     end
+  end,
 })
