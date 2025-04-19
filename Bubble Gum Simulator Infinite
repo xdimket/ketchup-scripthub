@@ -328,6 +328,23 @@ local ResetFlightSpeedButton = PlayerTab:CreateButton({
 local BGSI = MainWindow:CreateTab("BGSI", 4483362458)
 local AccessSection = BGSI:CreateSection("Access")
 
+local WheelSpinToggle = BGSI:CreateToggle({
+  Name = "Show Wheel Spin",
+  CurrentValue = false,
+  Flag = "WheelSpinVisibility",
+  Callback = function(Value)
+     -- Get the WheelSpin element
+     local player = game:GetService("Players").LocalPlayer
+     local wheelSpin = player.PlayerGui.ScreenGui.WheelSpin
+     
+     -- Set the Visibility attribute based on toggle state
+     if wheelSpin then
+        wheelSpin:SetAttribute("Visibility", Value)
+     else
+        warn("WheelSpin GUI element not found")
+     end
+  end,
+})
 
 
 local AutoFarmSection = BGSI:CreateSection("AutoFarm")
