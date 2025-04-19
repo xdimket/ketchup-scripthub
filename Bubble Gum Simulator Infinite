@@ -325,68 +325,61 @@ local ResetFlightSpeedButton = PlayerTab:CreateButton({
 
 
 
-local BGSITab = MainWindow:CreateTab("BGSI", 4483362458)
-local AccessSection = BGSITab:CreateSection("Access")
-local AutoFarmSection = BGSITab:CreateSection("AutoFarm")
-local function isUUID(str)
-    local pattern = "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$"
-    return string.match(str, pattern) ~= nil
-end
+local BGSI = MainWindow:CreateTab("BGSI", 4483362458)
+local AccessSection = BGSI:CreateSection("Access")
+local AutoFarmSection = BGSI:CreateSection("AutoFarm")
 
-local pickupsAutofarmThread -- This will be used only for the PickupsToggle
-
-local PickupsToggle = BGSITab:CreateToggle({
-    Name = "Autofarm Pickups",
-    CurrentValue = false,
-    Flag = "AutofarmPickups",
-    Callback = function(Value)
-        if Value then
-            -- Start the autofarm when toggle is enabled
-            pickupsAutofarmThread = task.spawn(function()
-                while PickupsToggle.CurrentValue do
-                    local targetParent = nil
-
-                    for _, folder in ipairs(workspace:GetDescendants()) do
-                        if folder:IsA("Folder") and folder.Name == "Chunker" then
-                            for _, child in ipairs(folder:GetChildren()) do
-                                if isUUID(child.Name) then
-                                    targetParent = folder
-                                    break
-                                end
-                            end
-                            if targetParent then break end
+local PickupToggle = BGSI:CreateToggle({
+   Name = "AutoFarm Pickups",
+   CurrentValue = false,
+   Flag = "AutoFarmPickups", -- A descriptive flag name for the configuration
+   Callback = function(Value)
+      -- Set the global variable based on toggle state
+      _G.collectingPickups = Value
+      
+      -- If enabled, start the collection script
+      if Value then
+         spawn(function()
+            while _G.collectingPickups do
+               local targetParent = nil
+               for _, folder in ipairs(workspace:GetDescendants()) do
+                  if folder:IsA("Folder") and folder.Name == "Chunker" then
+                     for _, child in ipairs(folder:GetChildren()) do
+                        if isUUID(child.Name) then
+                           targetParent = folder
+                           break
                         end
-                    end
+                     end
+                     if targetParent then break end
+                  end
+               end
 
-                    if targetParent then
-                        for _, pickup in ipairs(targetParent:GetChildren()) do
-                            if pickup:IsA("BasePart") or pickup:IsA("Model") then
-                                local args = {
-                                    [1] = pickup.Name
-                                }
-
-                                game:GetService("ReplicatedStorage")
-                                    :WaitForChild("Remotes")
-                                    :WaitForChild("Pickups")
-                                    :WaitForChild("CollectPickup")
-                                    :FireServer(unpack(args))
-
-                                pickup:Destroy()
-                            end
-                        end
-                    else
-                        warn("No Chunker folder found with UUID-style children.")
-                    end
-
-                    task.wait(5)
-                end
-            end)
-        else
-            -- Stop the loop when toggle is turned off (in case you want to cancel the task explicitly)
-            if pickupsAutofarmThread then
-                task.cancel(pickupsAutofarmThread)
-                pickupsAutofarmThread = nil
+               if targetParent then
+                  for _, pickup in ipairs(targetParent:GetChildren()) do
+                     if pickup:IsA("BasePart") or pickup:IsA("Model") then
+                        local args = {
+                           [1] = pickup.Name 
+                        }
+                        game:GetService("ReplicatedStorage")
+                           :WaitForChild("Remotes")
+                           :WaitForChild("Pickups")
+                           :WaitForChild("CollectPickup")
+                           :FireServer(unpack(args))
+                        pickup:Destroy()
+                     end
+                  end
+               else
+                  warn("No Chunker folder found with UUID-style children.")
+               end
+               wait(5)
             end
-        end
-    end
+         end)
+      end
+   end,
 })
+
+-- UUID validation function
+local function isUUID(str)
+   local pattern = "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$"
+   return string.match(str, pattern) ~= nil
+end
