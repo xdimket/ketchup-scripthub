@@ -331,15 +331,15 @@ local AccessSection = BGSI:CreateSection("Access")
 local WheelSpinToggle = BGSI:CreateToggle({
   Name = "Show Wheel Spin",
   CurrentValue = false,
-  Flag = "WheelSpinVisibility",
+  Flag = "WheelSpinVisible",
   Callback = function(Value)
      -- Get the WheelSpin element
      local player = game:GetService("Players").LocalPlayer
      local wheelSpin = player.PlayerGui.ScreenGui.WheelSpin
      
-     -- Set the Visibility attribute based on toggle state
+     -- Set the Visible attribute based on toggle state
      if wheelSpin then
-        wheelSpin:SetAttribute("Visibility", Value)
+        wheelSpin:SetAttribute("Visible", Value)
      else
         warn("WheelSpin GUI element not found")
      end
