@@ -341,6 +341,47 @@ local WheelSpinToggle = BGSI:CreateToggle({
       end
    end,
 })
+local PotionsToggle = BGSI:CreateToggle({
+   Name = "Toggle Potions Visibility",
+   CurrentValue = false,
+   Flag = "PotionsVisibility",
+   Callback = function(Value)
+      local potions = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Potions
+      if potions.Visible == true then
+         potions.Visible = false
+      else
+         potions.Visible = true
+      end
+   end,
+})
+
+local ItemShopToggle = BGSI:CreateToggle({
+   Name = "Toggle Item Shop Visibility",
+   CurrentValue = false,
+   Flag = "ItemShopVisibility",
+   Callback = function(Value)
+      local itemShop = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.ItemShop
+      if itemShop.Visible == true then
+         itemShop.Visible = false
+      else
+         itemShop.Visible = true
+      end
+   end,
+})
+
+local EnchantsToggle = BGSI:CreateToggle({
+   Name = "Toggle Enchants Visibility",
+   CurrentValue = false,
+   Flag = "EnchantsVisibility",
+   Callback = function(Value)
+      local enchants = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Enchants
+      if enchants.Visible == true then
+         enchants.Visible = false
+      else
+         enchants.Visible = true
+      end
+   end,
+})
 
 
 local AutoFarmSection = BGSI:CreateSection("AutoFarm")
