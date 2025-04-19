@@ -1,8 +1,8 @@
 -- /////////////  INITIALIZE RAYFIELD UI  /////////////
 
-__Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-__MainWindow = Rayfield:CreateWindow({
+MainWindow = Rayfield:CreateWindow({
    Name = "Ketchup's Script Hub",
    LoadingTitle = "Scripts",
    LoadingSubtitle = "by ketchup",
@@ -314,5 +314,3 @@ local ResetFlightSpeedButton = PlayerTab:CreateButton({
         FlightSpeedSlider:Set(50) -- Update the slider to match the reset value
     end,
 })
--- Game Checker
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xdimket/ketchup-scripthub/refs/heads/main/gamechecker.lua",true))()
