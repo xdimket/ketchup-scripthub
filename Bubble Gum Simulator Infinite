@@ -427,3 +427,26 @@ local BubbleToggle = BGSI:CreateToggle({
      end
   end,
 })
+local DoggyJumpToggle = BGSI:CreateToggle({
+  Name = "AutoFarm Doggy Jump",
+  CurrentValue = false,
+  Flag = "AutoFarmDoggyJump",
+  Callback = function(Value)
+     -- Set the global variable based on toggle state
+     _G.autoFarmingDoggyJump = Value
+     
+     -- If enabled, start the Doggy Jump win script
+     if Value then
+        spawn(function()
+           while _G.autoFarmingDoggyJump do
+              local args = {
+                 [1] = "DoggyJumpWin",
+                 [2] = 3
+              }
+              game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer(unpack(args))
+              wait(120) -- Wait 2 minutes (120 seconds)
+           end
+        end)
+     end
+  end,
+})
