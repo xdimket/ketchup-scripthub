@@ -453,28 +453,23 @@ local PickupToggle = BGSI:CreateToggle({
    CurrentValue = false,
    Flag = "AutoFarmPickups",
    Callback = function(Value)
-      -- Set the global variable based on toggle state
       _G.collectingPickups = Value
 
-      -- If enabled, start the collection script
       if Value then
          spawn(function()
-            -- UUID checker
             local function isUUID(str)
                local pattern = "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$"
                return type(str) == "string" and string.match(str, pattern) ~= nil
             end
 
-            -- Main collection loop
             while _G.collectingPickups do
                local success, errorMsg = pcall(function()
                   local chunkerFolders = {}
 
-                  -- Collect all Chunker folders with UUID-style children
                   for _, folder in ipairs(workspace:GetDescendants()) do
                      if folder:IsA("Folder") and folder.Name == "Chunker" then
                         for _, child in ipairs(folder:GetChildren()) do
-                           if child and child.Name and isUUID(child.Name) then
+                           if child and isUUID(child.Name) then
                               table.insert(chunkerFolders, folder)
                               break
                            end
@@ -482,24 +477,42 @@ local PickupToggle = BGSI:CreateToggle({
                      end
                   end
 
-                  -- Process all valid folders and pickups
                   if #chunkerFolders > 0 then
                      for _, chunker in ipairs(chunkerFolders) do
                         for _, pickup in ipairs(chunker:GetChildren()) do
-                           if pickup and isUUID(pickup.Name) and (pickup:IsA("BasePart") or pickup:IsA("Model")) then
-                              -- Re-check it's still parented to a Chunker folder
+                           if pickup
+                              and isUUID(pickup.Name)
+                              and (pickup:IsA("BasePart") or pickup:IsA("Model"))
+                              and not pickup:GetAttribute("Handled") then
+
                               if pickup.Parent == chunker then
+                                 pickup:SetAttribute("Handled", true)
+
                                  local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
                                  if remotes then
                                     local pickups = remotes:FindFirstChild("Pickups")
                                     if pickups then
                                        local collectPickup = pickups:FindFirstChild("CollectPickup")
                                        if collectPickup then
-                                          collectPickup:FireServer(pickup.Name)
-                                          -- Final check before destroying
-                                          if pickup and pickup.Parent == chunker then
-                                             pickup:Destroy()
-                                          end
+                                          pcall(function()
+                                             collectPickup:FireServer(pickup.Name)
+                                          end)
+
+                                          -- Soft remove
+                                          pcall(function()
+                                             if pickup and pickup.Parent == chunker then
+                                                pickup.Parent = nil
+                                             end
+                                          end)
+
+                                          -- Fully destroy after 5s (to avoid race condition with reparenting)
+                                          task.delay(5, function()
+                                             if pickup and pickup:GetAttribute("Handled") then
+                                                pcall(function()
+                                                   pickup:Destroy()
+                                                end)
+                                             end
+                                          end)
                                        end
                                     end
                                  end
@@ -508,7 +521,7 @@ local PickupToggle = BGSI:CreateToggle({
                         end
                      end
                   else
-                     -- warn("No Chunker folders with valid UUID children found.")
+                     warn("No Chunker folders with valid UUID children found.")
                   end
                end)
 
@@ -516,12 +529,13 @@ local PickupToggle = BGSI:CreateToggle({
                   warn("Error in pickup collection: " .. tostring(errorMsg))
                end
 
-               wait(4)
+               wait(5)
             end
          end)
       end
    end,
 })
+
 
 
 
