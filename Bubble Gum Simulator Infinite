@@ -514,7 +514,7 @@ local PickupToggle = BGSI:CreateToggle({
                   warn("Error in pickup collection: " .. tostring(errorMsg))
                end
 
-               wait(5)
+               wait(7)
             end
          end)
       end
