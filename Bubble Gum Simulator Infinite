@@ -459,45 +459,48 @@ local PickupToggle = BGSI:CreateToggle({
       -- If enabled, start the collection script
       if Value then
          spawn(function()
-            -- Move the isUUID function inside to ensure it's available
+            -- UUID checker
             local function isUUID(str)
                local pattern = "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$"
                return type(str) == "string" and string.match(str, pattern) ~= nil
             end
 
-            -- Main collection loop with error handling
+            -- Main collection loop
             while _G.collectingPickups do
                local success, errorMsg = pcall(function()
                   local chunkerFolders = {}
 
-                  -- Find all Chunker folders with UUID-style children
+                  -- Collect all Chunker folders with UUID-style children
                   for _, folder in ipairs(workspace:GetDescendants()) do
                      if folder:IsA("Folder") and folder.Name == "Chunker" then
                         for _, child in ipairs(folder:GetChildren()) do
                            if child and child.Name and isUUID(child.Name) then
                               table.insert(chunkerFolders, folder)
-                              break -- Only need to confirm one valid UUID child to include folder
+                              break
                            end
                         end
                      end
                   end
 
+                  -- Process all valid folders and pickups
                   if #chunkerFolders > 0 then
                      for _, chunker in ipairs(chunkerFolders) do
                         for _, pickup in ipairs(chunker:GetChildren()) do
-                           if pickup and (pickup:IsA("BasePart") or pickup:IsA("Model")) and isUUID(pickup.Name) then
-                              local args = {
-                                 [1] = pickup.Name
-                              }
-
-                              local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
-                              if remotes then
-                                 local pickups = remotes:FindFirstChild("Pickups")
-                                 if pickups then
-                                    local collectPickup = pickups:FindFirstChild("CollectPickup")
-                                    if collectPickup then
-                                       collectPickup:FireServer(unpack(args))
-                                       pickup:Destroy()
+                           if pickup and isUUID(pickup.Name) and (pickup:IsA("BasePart") or pickup:IsA("Model")) then
+                              -- Re-check it's still parented to a Chunker folder
+                              if pickup.Parent == chunker then
+                                 local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+                                 if remotes then
+                                    local pickups = remotes:FindFirstChild("Pickups")
+                                    if pickups then
+                                       local collectPickup = pickups:FindFirstChild("CollectPickup")
+                                       if collectPickup then
+                                          collectPickup:FireServer(pickup.Name)
+                                          -- Final check before destroying
+                                          if pickup and pickup.Parent == chunker then
+                                             pickup:Destroy()
+                                          end
+                                       end
                                     end
                                  end
                               end
@@ -505,21 +508,21 @@ local PickupToggle = BGSI:CreateToggle({
                         end
                      end
                   else
-                     warn("No Chunker folders found with UUID-style children.")
+                     -- warn("No Chunker folders with valid UUID children found.")
                   end
                end)
 
-               -- Log any errors
                if not success then
                   warn("Error in pickup collection: " .. tostring(errorMsg))
                end
 
-               wait(8)
+               wait(4)
             end
          end)
       end
    end,
 })
+
 
 
 local BubbleToggle = BGSI:CreateToggle({
