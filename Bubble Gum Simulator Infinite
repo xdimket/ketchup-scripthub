@@ -466,6 +466,7 @@ local PickupToggle = BGSI:CreateToggle({
                local success, errorMsg = pcall(function()
                   local chunkerFolders = {}
 
+                  -- Collect all streamed-in Chunker folders with UUID children
                   for _, folder in ipairs(workspace:GetDescendants()) do
                      if folder:IsA("Folder") and folder.Name == "Chunker" then
                         for _, child in ipairs(folder:GetChildren()) do
@@ -477,51 +478,55 @@ local PickupToggle = BGSI:CreateToggle({
                      end
                   end
 
-                  if #chunkerFolders > 0 then
-                     for _, chunker in ipairs(chunkerFolders) do
-                        for _, pickup in ipairs(chunker:GetChildren()) do
-                           if pickup
-                              and isUUID(pickup.Name)
-                              and (pickup:IsA("BasePart") or pickup:IsA("Model"))
-                              and not pickup:GetAttribute("Handled") then
+                  -- Skip loop if no valid folders
+                  if #chunkerFolders == 0 then
+                     warn("No Chunker folders with UUID-style pickups found. Waiting...")
+                     return
+                  end
 
-                              if pickup.Parent == chunker then
-                                 pickup:SetAttribute("Handled", true)
+                  -- Handle pickups from all active Chunker folders
+                  for _, chunker in ipairs(chunkerFolders) do
+                     for _, pickup in ipairs(chunker:GetChildren()) do
+                        if pickup
+                           and isUUID(pickup.Name)
+                           and (pickup:IsA("BasePart") or pickup:IsA("Model"))
+                           and not pickup:GetAttribute("Handled")
+                           and pickup:IsDescendantOf(workspace)
+                           and pickup.Parent == chunker then
 
-                                 local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
-                                 if remotes then
-                                    local pickups = remotes:FindFirstChild("Pickups")
-                                    if pickups then
-                                       local collectPickup = pickups:FindFirstChild("CollectPickup")
-                                       if collectPickup then
+                           pickup:SetAttribute("Handled", true)
+
+                           local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+                           if remotes then
+                              local pickupsFolder = remotes:FindFirstChild("Pickups")
+                              if pickupsFolder then
+                                 local collectPickup = pickupsFolder:FindFirstChild("CollectPickup")
+                                 if collectPickup then
+                                    -- Fire remote to collect
+                                    pcall(function()
+                                       collectPickup:FireServer(pickup.Name)
+                                    end)
+
+                                    -- Soft remove the pickup to avoid parent-lock issues
+                                    pcall(function()
+                                       if pickup:IsDescendantOf(workspace) then
+                                          pickup.Parent = nil
+                                       end
+                                    end)
+
+                                    -- Fully destroy after short delay
+                                    task.delay(5, function()
+                                       if pickup and pickup:GetAttribute("Handled") then
                                           pcall(function()
-                                             collectPickup:FireServer(pickup.Name)
-                                          end)
-
-                                          -- Soft remove
-                                          pcall(function()
-                                             if pickup and pickup.Parent == chunker then
-                                                pickup.Parent = nil
-                                             end
-                                          end)
-
-                                          -- Fully destroy after 5s (to avoid race condition with reparenting)
-                                          task.delay(5, function()
-                                             if pickup and pickup:GetAttribute("Handled") then
-                                                pcall(function()
-                                                   pickup:Destroy()
-                                                end)
-                                             end
+                                             pickup:Destroy()
                                           end)
                                        end
-                                    end
+                                    end)
                                  end
                               end
                            end
                         end
                      end
-                  else
-                     warn("No Chunker folders with valid UUID children found.")
                   end
                end)
 
@@ -529,12 +534,13 @@ local PickupToggle = BGSI:CreateToggle({
                   warn("Error in pickup collection: " .. tostring(errorMsg))
                end
 
-               wait(5)
+               wait(4) -- Loop delay reduced to 4 seconds
             end
          end)
       end
    end,
 })
+
 
 
 
