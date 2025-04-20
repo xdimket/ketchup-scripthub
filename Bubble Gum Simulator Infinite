@@ -478,9 +478,9 @@ local PickupToggle = BGSI:CreateToggle({
                      end
                   end
 
-                  -- Skip loop if no valid folders
+                  -- If no Chunker folders are found (streaming out), skip the loop cycle
                   if #chunkerFolders == 0 then
-                     warn("No Chunker folders with UUID-style pickups found. Waiting...")
+                     warn("No Chunker folders found in current streamed area. Skipping collection cycle.")
                      return
                   end
 
@@ -530,16 +530,18 @@ local PickupToggle = BGSI:CreateToggle({
                   end
                end)
 
+               -- Log errors if they occur
                if not success then
                   warn("Error in pickup collection: " .. tostring(errorMsg))
                end
 
-               wait(4) -- Loop delay reduced to 4 seconds
+               wait(4) -- Reduced loop delay to 4 seconds
             end
          end)
       end
    end,
 })
+
 
 
 
