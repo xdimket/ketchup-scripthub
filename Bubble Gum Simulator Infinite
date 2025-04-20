@@ -560,3 +560,34 @@ local DoggyJumpToggle = BGSI:CreateToggle({
      end
   end,
 })
+
+-- Looping function that checks for royal-chest every 10 seconds
+local function checkForRoyalChest()
+    while true do
+        wait(10)  -- Wait for 10 seconds before checking again
+
+        local riftFolder = workspace.Rendered.Rifts
+        for _, child in pairs(riftFolder:GetChildren()) do
+            local originalName = child.Name
+
+            -- Check if the child is a royal-chest and it doesn't have the "Notified" attribute
+            if originalName:lower() == "royal-chest" then
+                if not child:GetAttribute("Notified") then
+                    local yPosition = math.floor(child.WorldPivot.Position.Y)
+                    -- Notify about the royal chest spawn
+                    Rayfield:Notify({
+                        Title = "Royal Chest Spawned", 
+                        Content = "Royal Chest | Y Position: " .. yPosition, 
+                        Duration = 6.5,
+                        Image = 4483362458,
+                    })
+                    -- Mark this royal chest as notified
+                    child:SetAttribute("Notified", true)
+                end
+            end
+        end
+    end
+end
+
+-- Call the function to start checking for royal chests
+checkForRoyalChest()
