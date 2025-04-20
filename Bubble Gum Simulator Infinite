@@ -378,16 +378,6 @@ local RiftButton = BGSI:CreateButton({
           local displayName = originalName
           local yPosition = math.floor(child.WorldPivot.Position.Y)
       
-          -- Check if the child is a royal-chest
-          if originalName:lower() == "royal-chest" then
-              Rayfield:Notify({
-                  Title = "Royal Chest Spawned", 
-                  Content = "Royal Chest | Y Position: " .. yPosition, 
-                  Duration = 6.5,
-                  Image = 4483362458,
-              })
-          end
-      
           -- Special name overrides for eggs
           if originalName:lower() == "event-2" then
               displayName = "pastel-egg"
@@ -397,6 +387,9 @@ local RiftButton = BGSI:CreateButton({
       
           if displayName:lower():sub(-4) == "-egg" then
               local multiplier = "N/A"
+              local duration = "N/A"
+              
+              -- Try to get the multiplier for the egg
               local success, result = pcall(function()
                   return child.Display.SurfaceGui.Icon.Luck.Text
               end)
@@ -405,10 +398,20 @@ local RiftButton = BGSI:CreateButton({
                   multiplier = result
               end
       
+              -- Try to get the duration for the egg
+              success, result = pcall(function()
+                  return child.Display.SurfaceGui.Timer.Text
+              end)
+      
+              if success then
+                  duration = result
+              end
+      
               table.insert(eggEntries, {
                   Name = formatEggName(displayName),
                   YPosition = yPosition,
-                  Multiplier = multiplier
+                  Multiplier = multiplier,
+                  Duration = duration
               })
           else
               table.insert(otherEntries, {
@@ -425,7 +428,7 @@ local RiftButton = BGSI:CreateButton({
       -- Print egg entries
       print("🥚 Eggs")
       for _, entry in ipairs(eggEntries) do
-          print(string.format("%s %s | Y = %d", entry.Multiplier, entry.Name, entry.YPosition))
+          print(string.format("%s %s | Y = %d | Duration: %s", entry.Multiplier, entry.Name, entry.YPosition, entry.Duration))
       end
       
       -- Divider
@@ -437,6 +440,9 @@ local RiftButton = BGSI:CreateButton({
           print(string.format("%s | Y = %d", entry.Name, entry.YPosition))
       end
       
+      print("\n-------------------------\n")
+      
+            
    end,
 }) 
 
