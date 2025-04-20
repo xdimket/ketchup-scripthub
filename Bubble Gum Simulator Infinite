@@ -341,6 +341,26 @@ local WheelSpinToggle = BGSI:CreateToggle({
       end
    end,
 })
+local spinLoop
+
+local AutoClaimWheelSpinToggle = BGSI:CreateToggle({
+   Name = "Auto Claim Free Wheel Spin",
+   CurrentValue = false,
+   Flag = "AutoClaimWheelSpin",
+   Callback = function(v)
+      if v then
+         spinLoop = task.spawn(function()
+            while true do
+               game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(unpack({"ClaimFreeWheelSpin"}))
+               task.wait(60)
+            end
+         end)
+      else
+         if spinLoop then task.cancel(spinLoop) spinLoop = nil end
+      end
+   end,
+})
+
 
 local EnchantsToggle = BGSI:CreateToggle({
    Name = "Toggle Enchants Visibility",
