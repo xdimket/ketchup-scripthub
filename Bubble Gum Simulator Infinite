@@ -356,6 +356,89 @@ local EnchantsToggle = BGSI:CreateToggle({
    end,
 })
 
+local RiftButton = BGSI:CreateButton({ 
+   Name = "Print Rifts (Press F9 after)", 
+   Callback = function()
+      local riftFolder = workspace.Rendered.Rifts
+      local eggEntries = {}
+      local otherEntries = {}
+      
+      local function formatEggName(name)
+          name = name:gsub("[-_]egg$", "") -- remove -egg or _egg
+          name = name:gsub("^%l", string.upper) -- capitalize first letter
+          return name .. " Egg"
+      end
+      
+      local function sortByYPosition(a, b)
+          return a.YPosition < b.YPosition
+      end
+      
+      for _, child in pairs(riftFolder:GetChildren()) do
+          local originalName = child.Name
+          local displayName = originalName
+          local yPosition = math.floor(child.WorldPivot.Position.Y)
+      
+          -- Check if the child is a royal-chest
+          if originalName:lower() == "royal-chest" then
+              Rayfield:Notify({
+                  Title = "Royal Chest Spawned", 
+                  Content = "Royal Chest | Y Position: " .. yPosition, 
+                  Duration = 6.5,
+                  Image = 4483362458,
+              })
+          end
+      
+          -- Special name overrides for eggs
+          if originalName:lower() == "event-2" then
+              displayName = "pastel-egg"
+          elseif originalName:lower() == "event-1" then
+              displayName = "bunny-egg"
+          end
+      
+          if displayName:lower():sub(-4) == "-egg" then
+              local multiplier = "N/A"
+              local success, result = pcall(function()
+                  return child.Display.SurfaceGui.Icon.Luck.Text
+              end)
+      
+              if success then
+                  multiplier = result
+              end
+      
+              table.insert(eggEntries, {
+                  Name = formatEggName(displayName),
+                  YPosition = yPosition,
+                  Multiplier = multiplier
+              })
+          else
+              table.insert(otherEntries, {
+                  Name = displayName,
+                  YPosition = yPosition
+              })
+          end
+      end
+      
+      -- Sort both lists by Y position
+      table.sort(eggEntries, sortByYPosition)
+      table.sort(otherEntries, sortByYPosition)
+      
+      -- Print egg entries
+      print("🥚 Eggs")
+      for _, entry in ipairs(eggEntries) do
+          print(string.format("%s %s | Y = %d", entry.Multiplier, entry.Name, entry.YPosition))
+      end
+      
+      -- Divider
+      print("\n-------------------------\n")
+      
+      -- Print other entries
+      print("📦 Other")
+      for _, entry in ipairs(otherEntries) do
+          print(string.format("%s | Y = %d", entry.Name, entry.YPosition))
+      end
+      
+   end,
+}) 
 
 local AutoFarmSection = BGSI:CreateSection("AutoFarm")
 
