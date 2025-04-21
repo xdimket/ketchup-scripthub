@@ -385,14 +385,34 @@
  
 local RiftParagraph = BGSI:CreateParagraph({
     Title = "Rifts Info",
-    Content = "Loading..."
+    Content = "⏳ Starting debug..."
 })
 
+local function debugLog(message)
+    warn("[Rift Debug] " .. message)
+end
+
 local function getRiftsInfo()
-    local riftFolder = workspace:FindFirstChild("Rendered") and workspace.Rendered:FindFirstChild("Rifts")
-    if not riftFolder then
-        return "❌ Rifts folder not found."
+    local debugMessages = {}
+    local function log(msg)
+        table.insert(debugMessages, msg)
+        debugLog(msg)
     end
+
+    log("Searching for Rendered.Rifts folder...")
+    local rendered = workspace:FindFirstChild("Rendered")
+    if not rendered then
+        log("❌ 'Rendered' folder not found in workspace.")
+        return table.concat(debugMessages, "\n")
+    end
+
+    local riftFolder = rendered:FindFirstChild("Rifts")
+    if not riftFolder then
+        log("❌ 'Rifts' folder not found inside Rendered.")
+        return table.concat(debugMessages, "\n")
+    end
+
+    log("✅ Found Rifts folder. Scanning children...")
 
     local eggEntries = {}
     local otherEntries = {}
@@ -407,16 +427,20 @@ local function getRiftsInfo()
         return a.YPosition < b.YPosition
     end
 
-    for _, child in pairs(riftFolder:GetChildren()) do
+    local children = riftFolder:GetChildren()
+    log("Found " .. tostring(#children) .. " Rift entries.")
+
+    for _, child in ipairs(children) do
         local originalName = child.Name
         local displayName = originalName
-        local yPosition = 0
+        log("Processing: " .. originalName)
 
+        local yPosition = 0
         pcall(function()
             yPosition = math.floor(child.WorldPivot.Position.Y)
         end)
 
-        -- Special name overrides
+        -- Special overrides
         if originalName:lower() == "event-2" then
             displayName = "pastel-egg"
         elseif originalName:lower() == "event-1" then
@@ -427,20 +451,36 @@ local function getRiftsInfo()
             local multiplier = "N/A"
             local duration = "N/A"
 
-            pcall(function()
-                multiplier = child:FindFirstChild("Display", true)
+            log("Detected egg-type: " .. displayName)
+
+            -- Try to get Multiplier
+            local success1, result1 = pcall(function()
+                local luckText = child:FindFirstChild("Display", true)
                     and child.Display:FindFirstChild("SurfaceGui", true)
                     and child.Display.SurfaceGui:FindFirstChild("Icon", true)
                     and child.Display.SurfaceGui.Icon:FindFirstChild("Luck")
-                    and child.Display.SurfaceGui.Icon.Luck.Text or "N/A"
+                return luckText and luckText.Text or "N/A"
             end)
+            if success1 then
+                multiplier = result1
+                log("✔️ Multiplier: " .. multiplier)
+            else
+                log("⚠️ Failed to get multiplier.")
+            end
 
-            pcall(function()
-                duration = child:FindFirstChild("Display", true)
+            -- Try to get Duration
+            local success2, result2 = pcall(function()
+                local timerText = child:FindFirstChild("Display", true)
                     and child.Display:FindFirstChild("SurfaceGui", true)
                     and child.Display.SurfaceGui:FindFirstChild("Timer")
-                    and child.Display.SurfaceGui.Timer.Text or "N/A"
+                return timerText and timerText.Text or "N/A"
             end)
+            if success2 then
+                duration = result2
+                log("✔️ Duration: " .. duration)
+            else
+                log("⚠️ Failed to get duration.")
+            end
 
             table.insert(eggEntries, {
                 Name = formatEggName(displayName),
@@ -449,6 +489,7 @@ local function getRiftsInfo()
                 Duration = duration
             })
         else
+            log("Other entry: " .. displayName)
             table.insert(otherEntries, {
                 Name = displayName,
                 YPosition = yPosition
@@ -459,26 +500,26 @@ local function getRiftsInfo()
     table.sort(eggEntries, sortByYPosition)
     table.sort(otherEntries, sortByYPosition)
 
-    local content = {}
-
-    table.insert(content, "🥚 Eggs")
+    local lines = {}
+    table.insert(lines, "🥚 Eggs")
     for _, entry in ipairs(eggEntries) do
-        table.insert(content, string.format("%s %s | Y = %d | Duration: %s", entry.Multiplier, entry.Name, entry.YPosition, entry.Duration))
+        table.insert(lines, string.format("%s %s | Y = %d | Duration: %s", entry.Multiplier, entry.Name, entry.YPosition, entry.Duration))
     end
 
-    table.insert(content, "\n-------------------------\n")
-    table.insert(content, "📦 Other")
+    table.insert(lines, "\n-------------------------\n")
+    table.insert(lines, "📦 Other")
     for _, entry in ipairs(otherEntries) do
-        table.insert(content, string.format("%s | Y = %d", entry.Name, entry.YPosition))
+        table.insert(lines, string.format("%s | Y = %d", entry.Name, entry.YPosition))
     end
 
-    table.insert(content, "\n-------------------------\n")
-
-    return table.concat(content, "\n")
+    table.insert(lines, "\n-------------------------\n")
+    log("✅ Rift info successfully compiled.")
+    return table.concat(debugMessages, "\n") .. "\n\n" .. table.concat(lines, "\n")
 end
 
--- Start a loop to update the paragraph every 5 seconds
+-- Auto-updating loop
 task.spawn(function()
+    debugLog("⏳ Rift updater loop started.")
     while true do
         local success, result = pcall(getRiftsInfo)
         if success then
@@ -487,15 +528,17 @@ task.spawn(function()
                 Content = result
             })
         else
+            local errorMessage = "❌ Unexpected error in updater: " .. tostring(result)
             RiftParagraph:Set({
                 Title = "Rifts Info",
-                Content = "❌ Error updating Rift info:\n" .. tostring(result)
+                Content = errorMessage
             })
-            warn("Rift paragraph error: " .. tostring(result))
+            debugLog(errorMessage)
         end
         task.wait(5)
     end
 end)
+
 
 
  
