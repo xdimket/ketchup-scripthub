@@ -489,71 +489,67 @@ local PickupToggle = BGSI:CreateToggle({
                return type(str) == "string" and string.match(str, pattern) ~= nil
             end
 
+            -- Create a table to track pickups we've already handled
+            local handledPickups = {}
+            
             while _G.collectingPickups do
                local success, errorMsg = pcall(function()
-                  local chunkerFolders = {}
-
-                  -- Collect all streamed-in Chunker folders with UUID children
-                  for _, folder in ipairs(workspace:GetDescendants()) do
-                     if folder:IsA("Folder") and folder.Name == "Chunker" then
-                        for _, child in ipairs(folder:GetChildren()) do
-                           if child and isUUID(child.Name) then
-                              table.insert(chunkerFolders, folder)
-                              break
-                           end
-                        end
-                     end
-                  end
-
-                  -- If no Chunker folders are found (streaming out), skip the loop cycle
-                  if #chunkerFolders == 0 then
-                     warn("No Chunker folders found in current streamed area. Skipping collection cycle.")
-                     return
-                  end
-
-                  -- Handle pickups from all active Chunker folders
-                  for _, chunker in ipairs(chunkerFolders) do
-                     for _, pickup in ipairs(chunker:GetChildren()) do
-                        if pickup
-                           and isUUID(pickup.Name)
-                           and (pickup:IsA("BasePart") or pickup:IsA("Model"))
-                           and not pickup:GetAttribute("Handled")
-                           and pickup:IsDescendantOf(workspace)
-                           and pickup.Parent == chunker then
-
-                           pickup:SetAttribute("Handled", true)
-
-                           local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
-                           if remotes then
-                              local pickupsFolder = remotes:FindFirstChild("Pickups")
-                              if pickupsFolder then
-                                 local collectPickup = pickupsFolder:FindFirstChild("CollectPickup")
-                                 if collectPickup then
-                                    -- Fire remote to collect
-                                    pcall(function()
-                                       collectPickup:FireServer(pickup.Name)
-                                    end)
-
-                                    -- Soft remove the pickup to avoid parent-lock issues
-                                    pcall(function()
-                                       if pickup:IsDescendantOf(workspace) then
-                                          pickup.Parent = nil
-                                       end
-                                    end)
-
-                                    -- Fully destroy after short delay
-                                    task.delay(5, function()
-                                       if pickup and pickup:GetAttribute("Handled") then
-                                          pcall(function()
-                                             pickup:Destroy()
-                                          end)
-                                       end
-                                    end)
+                  -- Find all valid Chunker folders with UUID children
+                  for _, chunker in ipairs(workspace:GetChildren()) do
+                     if chunker:IsA("Folder") and chunker.Name == "Chunker" then
+                        -- Check each pickup in the chunker folder
+                        for _, pickup in ipairs(chunker:GetChildren()) do
+                           -- Verify the pickup is valid, has UUID name, hasn't been handled yet
+                           if pickup and 
+                              isUUID(pickup.Name) and
+                              not handledPickups[pickup.Name] and
+                              (pickup:IsA("BasePart") or pickup:IsA("Model")) and
+                              pickup.Parent == chunker then  -- Make sure parent is still chunker
+                              
+                              -- Mark as handled in our tracking table
+                              handledPickups[pickup.Name] = true
+                              
+                              -- Get required remote objects
+                              local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+                              if remotes then
+                                 local pickupsFolder = remotes:FindFirstChild("Pickups")
+                                 if pickupsFolder then
+                                    local collectPickup = pickupsFolder:FindFirstChild("CollectPickup")
+                                    if collectPickup then
+                                       -- Store the UUID name before attempting collection
+                                       local pickupName = pickup.Name
+                                       
+                                       -- Fire remote to collect
+                                       pcall(function()
+                                          collectPickup:FireServer(pickupName)
+                                       end)
+                                       
+                                       -- Let the game handle pickup removal naturally
+                                       -- We won't try to delete it ourselves
+                                    end
                                  end
                               end
                            end
                         end
                      end
+                  end
+                  
+                  -- Clean up handledPickups table periodically to prevent memory leaks
+                  -- Only keep recent entries (last 5 minutes worth)
+                  if os.time() % 60 == 0 then  -- Every minute
+                     local cutoffTime = os.time() - 300  -- 5 minutes ago
+                     local newHandledPickups = {}
+                     local count = 0
+                     
+                     for uuid, timestamp in pairs(handledPickups) do
+                        if type(timestamp) == "number" and timestamp > cutoffTime then
+                           newHandledPickups[uuid] = timestamp
+                           count = count + 1
+                        end
+                     end
+                     
+                     handledPickups = newHandledPickups
+                     print("Cleaned handled pickups table. Remaining entries: " .. count)
                   end
                end)
 
@@ -562,7 +558,7 @@ local PickupToggle = BGSI:CreateToggle({
                   warn("Error in pickup collection: " .. tostring(errorMsg))
                end
 
-               wait(4) -- Reduced loop delay to 4 seconds
+               wait(4) -- Check every 4 seconds
             end
          end)
       end
