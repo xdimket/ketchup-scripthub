@@ -1,652 +1,652 @@
 -- /////////////  INITIALIZE RAYFIELD UI  /////////////
--- //////////// Anti AFK //////////////////////////////
-local vu = game:GetService("VirtualUser")
-game:GetService("Players").LocalPlayer.Idled:connect(function()
-vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-wait(1)
-vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-end)
-
-Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
-MainWindow = Rayfield:CreateWindow({
-   Name = "Ketchup's Script Hub",
-   LoadingTitle = "Scripts",
-   LoadingSubtitle = "by ketchup",
-   ConfigurationSaving = {
-      Enabled = false,
-      FolderName = nil,
-      FileName = "Ketchup Hub"
-   },
-   Discord = {
-      Enabled = false,
-      Invite = "noinvitelink",
-      RememberJoins = true
-   },
-   KeySystem = false,
-   KeySettings = {
-      Title = "Untitled",
-      Subtitle = "Key System",
-      Note = "No method of obtaining the key is provided",
-      FileName = "Key",
-      SaveKey = true,
-      GrabKeyFromSite = false,
-      Key = {"Hello"}
-   }
-})
-
--- /////////////  CREATE TABS  /////////////
-
-local MainTab = MainWindow:CreateTab("Main", 4483362458) -- Renamed here
-local PlayerTab = MainWindow:CreateTab("Player", 4483362458)
-
--- /////////////  GENERAL SECTION  /////////////
-
-local GeneralSection = MainTab:CreateSection("General") -- Renamed here
-
-local IYButton = MainTab:CreateButton({
-   Name = "Infinite Yield",
-   Callback = function()
-      loadstring(game:HttpGet('https://raw.githubusercontent.com/KeanXR/INF-YIELD/refs/heads/main/v6.0.0'))()
-   end,
-})
-
--- /////////////  DEX SECTION  /////////////
-
-local DexSection = MainTab:CreateSection("Dex") -- Renamed here
-
-local DexButton = MainTab:CreateButton({
-   Name = "Dex",
-   Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-   end,
-})
-
--- /////////////  REMOTES SECTION  /////////////
-
-local RemotesSection = MainTab:CreateSection("Remotes") -- Renamed here
-
-local RSpyButton = MainTab:CreateButton({
-   Name = "RSpy",
-   Callback = function()
-      loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpyBeta.lua"))()
-   end,
-})
-
--- /////////////  SERVER JOINER SECTION  /////////////
-
-local ServerSection = MainTab:CreateSection("Server Joiner")
-
--- Initialize TeleportService for server joining
-local TeleportService = game:GetService("TeleportService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
--- Create input for Job ID
-local JobIDInput = MainTab:CreateInput({
-   Name = "Server Job ID",
-   PlaceholderText = "Enter server JobID here...",
-   RemoveTextAfterFocusLost = false,
-   Callback = function(Text)
-      -- Store the text but don't join yet
-   end,
-})
-
--- Create a button to join server by JobID
-local JoinServerButton = MainTab:CreateButton({
-   Name = "Join Server",
-   Callback = function()
-      local jobId = JobIDInput.CurrentValue
-      jobId = jobId:gsub("[\n\r]", ""):gsub("%s+", "")
-      if jobId and jobId ~= "" then
-         Rayfield:Notify({
-            Title = "Server Joiner",
-            Content = "Attempting to join server...",
-            Duration = 3,
-            Image = 4483362458
-         })
-         
-         -- Get the current place ID
-         local placeId = game.PlaceId
-         
-         -- Using pcall to handle any errors
-         local success, errorMsg = pcall(function()
-            TeleportService:TeleportToPlaceInstance(placeId, jobId, LocalPlayer)
-         end)
-         
-         if not success then
-            Rayfield:Notify({
-               Title = "Error",
-               Content = "Failed to join: " .. tostring(errorMsg),
-               Duration = 5,
-               Image = 4483362458
-            })
+ -- //////////// Anti AFK //////////////////////////////
+ local vu = game:GetService("VirtualUser")
+ game:GetService("Players").LocalPlayer.Idled:connect(function()
+ vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+ wait(1)
+ vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+ end)
+ 
+ Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+ 
+ MainWindow = Rayfield:CreateWindow({
+    Name = "Ketchup's Script Hub",
+    LoadingTitle = "Scripts",
+    LoadingSubtitle = "by ketchup",
+    ConfigurationSaving = {
+       Enabled = false,
+       FolderName = nil,
+       FileName = "Ketchup Hub"
+    },
+    Discord = {
+       Enabled = false,
+       Invite = "noinvitelink",
+       RememberJoins = true
+    },
+    KeySystem = false,
+    KeySettings = {
+       Title = "Untitled",
+       Subtitle = "Key System",
+       Note = "No method of obtaining the key is provided",
+       FileName = "Key",
+       SaveKey = true,
+       GrabKeyFromSite = false,
+       Key = {"Hello"}
+    }
+ })
+ 
+ -- /////////////  CREATE TABS  /////////////
+ 
+ local MainTab = MainWindow:CreateTab("Main", 4483362458) -- Renamed here
+ local PlayerTab = MainWindow:CreateTab("Player", 4483362458)
+ 
+ -- /////////////  GENERAL SECTION  /////////////
+ 
+ local GeneralSection = MainTab:CreateSection("General") -- Renamed here
+ 
+ local IYButton = MainTab:CreateButton({
+    Name = "Infinite Yield",
+    Callback = function()
+       loadstring(game:HttpGet('https://raw.githubusercontent.com/KeanXR/INF-YIELD/refs/heads/main/v6.0.0'))()
+    end,
+ })
+ 
+ -- /////////////  DEX SECTION  /////////////
+ 
+ local DexSection = MainTab:CreateSection("Dex") -- Renamed here
+ 
+ local DexButton = MainTab:CreateButton({
+    Name = "Dex",
+    Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+    end,
+ })
+ 
+ -- /////////////  REMOTES SECTION  /////////////
+ 
+ local RemotesSection = MainTab:CreateSection("Remotes") -- Renamed here
+ 
+ local RSpyButton = MainTab:CreateButton({
+    Name = "RSpy",
+    Callback = function()
+       loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpyBeta.lua"))()
+    end,
+ })
+ 
+ -- /////////////  SERVER JOINER SECTION  /////////////
+ 
+ local ServerSection = MainTab:CreateSection("Server Joiner")
+ 
+ -- Initialize TeleportService for server joining
+ local TeleportService = game:GetService("TeleportService")
+ local Players = game:GetService("Players")
+ local LocalPlayer = Players.LocalPlayer
+ 
+ -- Create input for Job ID
+ local JobIDInput = MainTab:CreateInput({
+    Name = "Server Job ID",
+    PlaceholderText = "Enter server JobID here...",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+       -- Store the text but don't join yet
+    end,
+ })
+ 
+ -- Create a button to join server by JobID
+ local JoinServerButton = MainTab:CreateButton({
+    Name = "Join Server",
+    Callback = function()
+       local jobId = JobIDInput.CurrentValue
+       jobId = jobId:gsub("[\n\r]", ""):gsub("%s+", "")
+       if jobId and jobId ~= "" then
+          Rayfield:Notify({
+             Title = "Server Joiner",
+             Content = "Attempting to join server...",
+             Duration = 3,
+             Image = 4483362458
+          })
+ 
+          -- Get the current place ID
+          local placeId = game.PlaceId
+ 
+          -- Using pcall to handle any errors
+          local success, errorMsg = pcall(function()
+             TeleportService:TeleportToPlaceInstance(placeId, jobId, LocalPlayer)
+          end)
+ 
+          if not success then
+             Rayfield:Notify({
+                Title = "Error",
+                Content = "Failed to join: " .. tostring(errorMsg),
+                Duration = 5,
+                Image = 4483362458
+             })
+          end
+       else
+          Rayfield:Notify({
+             Title = "Error",
+             Content = "Please enter a valid JobID",
+             Duration = 3,
+             Image = 4483362458
+          })
+       end
+    end,
+ })
+ 
+ -- Create a button to copy current server's JobID
+ local GetCurrentJobIDButton = MainTab:CreateButton({
+    Name = "Copy Current JobID",
+    Callback = function()
+       local currentJobId = game.JobId
+ 
+       -- Set the input field to the current JobID
+       JobIDInput:Set(currentJobId)
+ 
+       -- Notify the user
+       Rayfield:Notify({
+          Title = "Current JobID",
+          Content = "Current JobID copied: " .. currentJobId,
+          Duration = 5,
+          Image = 4483362458
+       })
+    end,
+ })
+ 
+ -- /////////////  PLAYER TAB SECTIONS  /////////////
+ 
+ local PlayerSection = PlayerTab:CreateSection("Player")
+ 
+ local WalkSpeedSlider = PlayerTab:CreateSlider({
+     Name = "Player WalkSpeed",
+     Range = {0, 200},
+     Increment = 1,
+     Suffix = "WalkSpeed",
+     CurrentValue = 16,
+     Flag = "WalkSpeedSlider",
+     Callback = function(Value)
+         game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+     end,
+ })
+ 
+ local JumpPowerSlider = PlayerTab:CreateSlider({
+     Name = "Player JumpPower",
+     Range = {0, 300},
+     Increment = 5,
+     Suffix = "JumpPower",
+     CurrentValue = 50,
+     Flag = "JumpPowerSlider",
+     Callback = function(Value)
+         game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+     end,
+ })
+ 
+ local ResetButton = PlayerTab:CreateButton({
+     Name = "Reset WalkSpeed & JumpPower",
+     Callback = function()
+         game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+         game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
+         WalkSpeedSlider:Set(16)
+         JumpPowerSlider:Set(50)
+     end,
+ })
+ 
+ -- /////////////  FORCE WALK AND JUMP SPEED TOGGLE  /////////////
+ 
+ local ForceWalkJump = false
+ 
+ local ForceWalkJumpToggle = PlayerTab:CreateToggle({
+     Name = "Force Walk and Jump Speed",
+     CurrentValue = false,
+     Flag = "ForceWalkJumpToggle",
+     Callback = function(Value)
+         ForceWalkJump = Value
+         if ForceWalkJump then
+             spawn(function()
+                 while ForceWalkJump do
+                     local humanoid = game.Players.LocalPlayer.Character.Humanoid
+                     humanoid.WalkSpeed = WalkSpeedSlider:Get()
+                     humanoid.JumpPower = JumpPowerSlider:Get()
+                     wait(0.5)
+                 end
+             end)
          end
-      else
-         Rayfield:Notify({
-            Title = "Error",
-            Content = "Please enter a valid JobID",
-            Duration = 3,
-            Image = 4483362458
-         })
-      end
-   end,
-})
-
--- Create a button to copy current server's JobID
-local GetCurrentJobIDButton = MainTab:CreateButton({
-   Name = "Copy Current JobID",
-   Callback = function()
-      local currentJobId = game.JobId
-      
-      -- Set the input field to the current JobID
-      JobIDInput:Set(currentJobId)
-      
-      -- Notify the user
-      Rayfield:Notify({
-         Title = "Current JobID",
-         Content = "Current JobID copied: " .. currentJobId,
-         Duration = 5,
-         Image = 4483362458
-      })
-   end,
-})
-
--- /////////////  PLAYER TAB SECTIONS  /////////////
-
-local PlayerSection = PlayerTab:CreateSection("Player")
-
-local WalkSpeedSlider = PlayerTab:CreateSlider({
-    Name = "Player WalkSpeed",
-    Range = {0, 200},
-    Increment = 1,
-    Suffix = "WalkSpeed",
-    CurrentValue = 16,
-    Flag = "WalkSpeedSlider",
-    Callback = function(Value)
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
-    end,
-})
-
-local JumpPowerSlider = PlayerTab:CreateSlider({
-    Name = "Player JumpPower",
-    Range = {0, 300},
-    Increment = 5,
-    Suffix = "JumpPower",
-    CurrentValue = 50,
-    Flag = "JumpPowerSlider",
-    Callback = function(Value)
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
-    end,
-})
-
-local ResetButton = PlayerTab:CreateButton({
-    Name = "Reset WalkSpeed & JumpPower",
-    Callback = function()
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
-        WalkSpeedSlider:Set(16)
-        JumpPowerSlider:Set(50)
-    end,
-})
-
--- /////////////  FORCE WALK AND JUMP SPEED TOGGLE  /////////////
-
-local ForceWalkJump = false
-
-local ForceWalkJumpToggle = PlayerTab:CreateToggle({
-    Name = "Force Walk and Jump Speed",
+     end,
+ })
+ 
+ -- /////////////  FLYING SECTION  /////////////
+ 
+ local FlyingSection = PlayerTab:CreateSection("Flying")
+ 
+ -- /////////////  FLY SCRIPT SETUP  /////////////
+ 
+ local Players = game:GetService("Players")
+ local player = Players.LocalPlayer
+ local character = player.Character or player.CharacterAdded:Wait()
+ local humanoid = character:WaitForChild("Humanoid")
+ local torso = character:WaitForChild("Head")
+ local flying = false
+ local ctrl = {f = 0, b = 0, l = 0, r = 0}
+ local flightSpeed = 50 -- Initial flight speed, can be adjusted with slider
+ local mouse = player:GetMouse()
+ 
+ -- Function to update flight speed
+ local function UpdateFlightSpeed(newSpeed)
+     flightSpeed = newSpeed
+ end
+ 
+ -- /////////////  FLY FUNCTION WITHOUT MOVEMENT TILT  /////////////
+ 
+ local function Fly()
+     local bg = Instance.new("BodyGyro", torso)
+     bg.P = 9e4
+     bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+ 
+     local bv = Instance.new("BodyVelocity", torso)
+     bv.velocity = Vector3.new(0, 0.1, 0)
+     bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+ 
+     repeat wait()
+         player.Character.Humanoid.PlatformStand = true
+ 
+         -- Set fixed velocity based on player controls and flight speed
+         bv.velocity = ((workspace.CurrentCamera.CFrame.LookVector * (ctrl.f + ctrl.b)) +
+                       ((workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, 0, 0).Position) - 
+                       workspace.CurrentCamera.CFrame.Position)) * flightSpeed
+ 
+         -- Rotate player to face the direction of the camera
+         bg.cframe = workspace.CurrentCamera.CFrame
+     until not flying
+ 
+     -- Reset flight settings when stopped
+     ctrl = {f = 0, b = 0, l = 0, r = 0}
+     bg:Destroy()
+     bv:Destroy()
+     player.Character.Humanoid.PlatformStand = false
+ end
+ 
+ -- /////////////  PLAYER CONTROLS FOR FLY MOVEMENT  /////////////
+ 
+ mouse.KeyDown:Connect(function(key)
+     if key:lower() == "w" then ctrl.f = 1
+     elseif key:lower() == "s" then ctrl.b = -1
+     elseif key:lower() == "a" then ctrl.l = -1
+     elseif key:lower() == "d" then ctrl.r = 1
+     end
+ end)
+ 
+ mouse.KeyUp:Connect(function(key)
+     if key:lower() == "w" then ctrl.f = 0
+     elseif key:lower() == "s" then ctrl.b = 0
+     elseif key:lower() == "a" then ctrl.l = 0
+     elseif key:lower() == "d" then ctrl.r = 0
+     end
+ end)
+ 
+ -- /////////////  FLY TOGGLE BUTTON  /////////////
+ 
+ local FlightToggle = PlayerTab:CreateToggle({
+     Name = "Toggle Flight",
+     CurrentValue = false,
+     Flag = "FlightToggle",
+     Callback = function(Value)
+         if Value then
+             flying = true
+             Fly()
+         else
+             flying = false
+         end
+     end,
+ })
+ 
+ -- /////////////  FLIGHT SPEED SLIDER  /////////////
+ 
+ local FlightSpeedSlider = PlayerTab:CreateSlider({
+     Name = "Flight Speed",
+     Range = {10, 400},
+     Increment = 10,
+     Suffix = "Speed",
+     CurrentValue = 50,
+     Flag = "FlightSpeedSlider",
+     Callback = function(Value)
+         UpdateFlightSpeed(Value)
+     end,
+ })
+ 
+ -- /////////////  RESET FLIGHT SPEED BUTTON  /////////////
+ 
+ local ResetFlightSpeedButton = PlayerTab:CreateButton({
+     Name = "Reset Flight Speed",
+     Callback = function()
+         flightSpeed = 50 -- Reset to default flight speed
+         FlightSpeedSlider:Set(50) -- Update the slider to match the reset value
+     end,
+ })
+ 
+ 
+ 
+ 
+ -- ??????????????????????????????????????????????????????????????????????????????
+ 
+ 
+ 
+ 
+ 
+ 
+ local BGSI = MainWindow:CreateTab("BGSI", 4483362458)
+ local AccessSection = BGSI:CreateSection("Access")
+ 
+ local WheelSpinToggle = BGSI:CreateToggle({
+    Name = "Toggle Wheel Spin Visibility",
     CurrentValue = false,
-    Flag = "ForceWalkJumpToggle",
+    Flag = "WheelSpinVisibility",
     Callback = function(Value)
-        ForceWalkJump = Value
-        if ForceWalkJump then
-            spawn(function()
-                while ForceWalkJump do
-                    local humanoid = game.Players.LocalPlayer.Character.Humanoid
-                    humanoid.WalkSpeed = WalkSpeedSlider:Get()
-                    humanoid.JumpPower = JumpPowerSlider:Get()
-                    wait(0.5)
+       local wheelSpin = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WheelSpin
+       if wheelSpin.Visible == true then
+          wheelSpin.Visible = false
+       else
+          wheelSpin.Visible = true
+       end
+    end,
+ })
+ local spinLoop
+ 
+ local AutoClaimWheelSpinToggle = BGSI:CreateToggle({
+    Name = "Auto Claim Free Wheel Spin",
+    CurrentValue = false,
+    Flag = "AutoClaimWheelSpin",
+    Callback = function(v)
+       if v then
+          spinLoop = task.spawn(function()
+             while true do
+                game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(unpack({"ClaimFreeWheelSpin"}))
+                task.wait(60)
+             end
+          end)
+       else
+          if spinLoop then task.cancel(spinLoop) spinLoop = nil end
+       end
+    end,
+ })
+ 
+ 
+ local EnchantsToggle = BGSI:CreateToggle({
+    Name = "Toggle Enchants Visibility",
+    CurrentValue = false,
+    Flag = "EnchantsVisibility",
+    Callback = function(Value)
+       local enchants = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Enchants
+       if enchants.Visible == true then
+          enchants.Visible = false
+       else
+          enchants.Visible = true
+       end
+    end,
+ })
+ 
+ local RiftButton = BGSI:CreateButton({ 
+    Name = "Print Rifts (Press F9 after)", 
+    Callback = function()
+       local riftFolder = workspace.Rendered.Rifts
+       local eggEntries = {}
+       local otherEntries = {}
+ 
+       local function formatEggName(name)
+           name = name:gsub("[-_]egg$", "") -- remove -egg or _egg
+           name = name:gsub("^%l", string.upper) -- capitalize first letter
+           return name .. " Egg"
+       end
+ 
+       local function sortByYPosition(a, b)
+           return a.YPosition < b.YPosition
+       end
+ 
+       for _, child in pairs(riftFolder:GetChildren()) do
+           local originalName = child.Name
+           local displayName = originalName
+           local yPosition = math.floor(child.WorldPivot.Position.Y)
+ 
+           -- Special name overrides for eggs
+           if originalName:lower() == "event-2" then
+               displayName = "pastel-egg"
+           elseif originalName:lower() == "event-1" then
+               displayName = "bunny-egg"
+           end
+ 
+           if displayName:lower():sub(-4) == "-egg" then
+               local multiplier = "N/A"
+               local duration = "N/A"
+ 
+               -- Try to get the multiplier for the egg
+               local success, result = pcall(function()
+                   return child.Display.SurfaceGui.Icon.Luck.Text
+               end)
+ 
+               if success then
+                   multiplier = result
+               end
+ 
+               -- Try to get the duration for the egg
+               success, result = pcall(function()
+                   return child.Display.SurfaceGui.Timer.Text
+               end)
+ 
+               if success then
+                   duration = result
+               end
+ 
+               table.insert(eggEntries, {
+                   Name = formatEggName(displayName),
+                   YPosition = yPosition,
+                   Multiplier = multiplier,
+                   Duration = duration
+               })
+           else
+               table.insert(otherEntries, {
+                   Name = displayName,
+                   YPosition = yPosition
+               })
+           end
+       end
+ 
+       -- Sort both lists by Y position
+       table.sort(eggEntries, sortByYPosition)
+       table.sort(otherEntries, sortByYPosition)
+ 
+       -- Print egg entries
+       print("🥚 Eggs")
+       for _, entry in ipairs(eggEntries) do
+           print(string.format("%s %s | Y = %d | Duration: %s", entry.Multiplier, entry.Name, entry.YPosition, entry.Duration))
+       end
+ 
+       -- Divider
+       print("\n-------------------------\n")
+ 
+       -- Print other entries
+       print("📦 Other")
+       for _, entry in ipairs(otherEntries) do
+           print(string.format("%s | Y = %d", entry.Name, entry.YPosition))
+       end
+ 
+       print("\n-------------------------\n")
+ 
+ 
+    end,
+ }) 
+ 
+ local AutoFarmSection = BGSI:CreateSection("AutoFarm")
+ 
+ local PickupToggle = BGSI:CreateToggle({
+    Name = "AutoFarm Pickups",
+    CurrentValue = false,
+    Flag = "AutoFarmPickups",
+    Callback = function(Value)
+       _G.collectingPickups = Value
+ 
+       if Value then
+          spawn(function()
+             local function isUUID(str)
+                local pattern = "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$"
+                return type(str) == "string" and string.match(str, pattern) ~= nil
+             end
+ 
+             while _G.collectingPickups do
+                local success, errorMsg = pcall(function()
+                   local chunkerFolders = {}
+ 
+                   -- Collect all streamed-in Chunker folders with UUID children
+                   for _, folder in ipairs(workspace:GetDescendants()) do
+                      if folder:IsA("Folder") and folder.Name == "Chunker" then
+                         for _, child in ipairs(folder:GetChildren()) do
+                            if child and isUUID(child.Name) then
+                               table.insert(chunkerFolders, folder)
+                               break
+                            end
+                         end
+                      end
+                   end
+ 
+                   -- If no Chunker folders are found (streaming out), skip the loop cycle
+                   if #chunkerFolders == 0 then
+                      warn("No Chunker folders found in current streamed area. Skipping collection cycle.")
+                      return
+                   end
+ 
+                   -- Handle pickups from all active Chunker folders
+                   for _, chunker in ipairs(chunkerFolders) do
+                      for _, pickup in ipairs(chunker:GetChildren()) do
+                         if pickup
+                            and isUUID(pickup.Name)
+                            and (pickup:IsA("BasePart") or pickup:IsA("Model"))
+                            and not pickup:GetAttribute("Handled")
+                            and pickup:IsDescendantOf(workspace)
+                            and pickup.Parent == chunker then
+ 
+                            pickup:SetAttribute("Handled", true)
+ 
+                            local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+                            if remotes then
+                               local pickupsFolder = remotes:FindFirstChild("Pickups")
+                               if pickupsFolder then
+                                  local collectPickup = pickupsFolder:FindFirstChild("CollectPickup")
+                                  if collectPickup then
+                                     -- Fire remote to collect
+                                     pcall(function()
+                                        collectPickup:FireServer(pickup.Name)
+                                     end)
+ 
+                                     -- Soft remove the pickup to avoid parent-lock issues
+                                     pcall(function()
+                                        if pickup:IsDescendantOf(workspace) then
+                                           pickup.Parent = nil
+                                        end
+                                     end)
+ 
+                                     -- Fully destroy after short delay
+                                     task.delay(5, function()
+                                        if pickup and pickup:GetAttribute("Handled") then
+                                           pcall(function()
+                                              pickup:Destroy()
+                                           end)
+                                        end
+                                     end)
+                                  end
+                               end
+                            end
+                         end
+                      end
+                   end
+                end)
+ 
+                -- Log errors if they occur
+                if not success then
+                   warn("Error in pickup collection: " .. tostring(errorMsg))
                 end
-            end)
-        end
+ 
+                wait(4) -- Reduced loop delay to 4 seconds
+             end
+          end)
+       end
     end,
-})
-
--- /////////////  FLYING SECTION  /////////////
-
-local FlyingSection = PlayerTab:CreateSection("Flying")
-
--- /////////////  FLY SCRIPT SETUP  /////////////
-
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-local torso = character:WaitForChild("Head")
-local flying = false
-local ctrl = {f = 0, b = 0, l = 0, r = 0}
-local flightSpeed = 50 -- Initial flight speed, can be adjusted with slider
-local mouse = player:GetMouse()
-
--- Function to update flight speed
-local function UpdateFlightSpeed(newSpeed)
-    flightSpeed = newSpeed
-end
-
--- /////////////  FLY FUNCTION WITHOUT MOVEMENT TILT  /////////////
-
-local function Fly()
-    local bg = Instance.new("BodyGyro", torso)
-    bg.P = 9e4
-    bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-    
-    local bv = Instance.new("BodyVelocity", torso)
-    bv.velocity = Vector3.new(0, 0.1, 0)
-    bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-
-    repeat wait()
-        player.Character.Humanoid.PlatformStand = true
-
-        -- Set fixed velocity based on player controls and flight speed
-        bv.velocity = ((workspace.CurrentCamera.CFrame.LookVector * (ctrl.f + ctrl.b)) +
-                      ((workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, 0, 0).Position) - 
-                      workspace.CurrentCamera.CFrame.Position)) * flightSpeed
-
-        -- Rotate player to face the direction of the camera
-        bg.cframe = workspace.CurrentCamera.CFrame
-    until not flying
-
-    -- Reset flight settings when stopped
-    ctrl = {f = 0, b = 0, l = 0, r = 0}
-    bg:Destroy()
-    bv:Destroy()
-    player.Character.Humanoid.PlatformStand = false
-end
-
--- /////////////  PLAYER CONTROLS FOR FLY MOVEMENT  /////////////
-
-mouse.KeyDown:Connect(function(key)
-    if key:lower() == "w" then ctrl.f = 1
-    elseif key:lower() == "s" then ctrl.b = -1
-    elseif key:lower() == "a" then ctrl.l = -1
-    elseif key:lower() == "d" then ctrl.r = 1
-    end
-end)
-
-mouse.KeyUp:Connect(function(key)
-    if key:lower() == "w" then ctrl.f = 0
-    elseif key:lower() == "s" then ctrl.b = 0
-    elseif key:lower() == "a" then ctrl.l = 0
-    elseif key:lower() == "d" then ctrl.r = 0
-    end
-end)
-
--- /////////////  FLY TOGGLE BUTTON  /////////////
-
-local FlightToggle = PlayerTab:CreateToggle({
-    Name = "Toggle Flight",
-    CurrentValue = false,
-    Flag = "FlightToggle",
-    Callback = function(Value)
-        if Value then
-            flying = true
-            Fly()
-        else
-            flying = false
-        end
-    end,
-})
-
--- /////////////  FLIGHT SPEED SLIDER  /////////////
-
-local FlightSpeedSlider = PlayerTab:CreateSlider({
-    Name = "Flight Speed",
-    Range = {10, 400},
-    Increment = 10,
-    Suffix = "Speed",
-    CurrentValue = 50,
-    Flag = "FlightSpeedSlider",
-    Callback = function(Value)
-        UpdateFlightSpeed(Value)
-    end,
-})
-
--- /////////////  RESET FLIGHT SPEED BUTTON  /////////////
-
-local ResetFlightSpeedButton = PlayerTab:CreateButton({
-    Name = "Reset Flight Speed",
-    Callback = function()
-        flightSpeed = 50 -- Reset to default flight speed
-        FlightSpeedSlider:Set(50) -- Update the slider to match the reset value
-    end,
-})
-
-
-
-
--- ??????????????????????????????????????????????????????????????????????????????
-
-
-
-
-
-
-local BGSI = MainWindow:CreateTab("BGSI", 4483362458)
-local AccessSection = BGSI:CreateSection("Access")
-
-local WheelSpinToggle = BGSI:CreateToggle({
-   Name = "Toggle Wheel Spin Visibility",
+ })
+ 
+ 
+ 
+ 
+ 
+ 
+ local BubbleToggle = BGSI:CreateToggle({
+   Name = "AutoFarm Bubbles",
    CurrentValue = false,
-   Flag = "WheelSpinVisibility",
+   Flag = "AutoFarmBubbles",
    Callback = function(Value)
-      local wheelSpin = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WheelSpin
-      if wheelSpin.Visible == true then
-         wheelSpin.Visible = false
-      else
-         wheelSpin.Visible = true
-      end
-   end,
-})
-local spinLoop
-
-local AutoClaimWheelSpinToggle = BGSI:CreateToggle({
-   Name = "Auto Claim Free Wheel Spin",
-   CurrentValue = false,
-   Flag = "AutoClaimWheelSpin",
-   Callback = function(v)
-      if v then
-         spinLoop = task.spawn(function()
-            while true do
-               game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(unpack({"ClaimFreeWheelSpin"}))
-               task.wait(60)
-            end
-         end)
-      else
-         if spinLoop then task.cancel(spinLoop) spinLoop = nil end
-      end
-   end,
-})
-
-
-local EnchantsToggle = BGSI:CreateToggle({
-   Name = "Toggle Enchants Visibility",
-   CurrentValue = false,
-   Flag = "EnchantsVisibility",
-   Callback = function(Value)
-      local enchants = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Enchants
-      if enchants.Visible == true then
-         enchants.Visible = false
-      else
-         enchants.Visible = true
-      end
-   end,
-})
-
-local RiftButton = BGSI:CreateButton({ 
-   Name = "Print Rifts (Press F9 after)", 
-   Callback = function()
-      local riftFolder = workspace.Rendered.Rifts
-      local eggEntries = {}
-      local otherEntries = {}
-      
-      local function formatEggName(name)
-          name = name:gsub("[-_]egg$", "") -- remove -egg or _egg
-          name = name:gsub("^%l", string.upper) -- capitalize first letter
-          return name .. " Egg"
-      end
-      
-      local function sortByYPosition(a, b)
-          return a.YPosition < b.YPosition
-      end
-      
-      for _, child in pairs(riftFolder:GetChildren()) do
-          local originalName = child.Name
-          local displayName = originalName
-          local yPosition = math.floor(child.WorldPivot.Position.Y)
-      
-          -- Special name overrides for eggs
-          if originalName:lower() == "event-2" then
-              displayName = "pastel-egg"
-          elseif originalName:lower() == "event-1" then
-              displayName = "bunny-egg"
-          end
-      
-          if displayName:lower():sub(-4) == "-egg" then
-              local multiplier = "N/A"
-              local duration = "N/A"
-              
-              -- Try to get the multiplier for the egg
-              local success, result = pcall(function()
-                  return child.Display.SurfaceGui.Icon.Luck.Text
-              end)
-      
-              if success then
-                  multiplier = result
-              end
-      
-              -- Try to get the duration for the egg
-              success, result = pcall(function()
-                  return child.Display.SurfaceGui.Timer.Text
-              end)
-      
-              if success then
-                  duration = result
-              end
-      
-              table.insert(eggEntries, {
-                  Name = formatEggName(displayName),
-                  YPosition = yPosition,
-                  Multiplier = multiplier,
-                  Duration = duration
-              })
-          else
-              table.insert(otherEntries, {
-                  Name = displayName,
-                  YPosition = yPosition
-              })
-          end
-      end
-      
-      -- Sort both lists by Y position
-      table.sort(eggEntries, sortByYPosition)
-      table.sort(otherEntries, sortByYPosition)
-      
-      -- Print egg entries
-      print("🥚 Eggs")
-      for _, entry in ipairs(eggEntries) do
-          print(string.format("%s %s | Y = %d | Duration: %s", entry.Multiplier, entry.Name, entry.YPosition, entry.Duration))
-      end
-      
-      -- Divider
-      print("\n-------------------------\n")
-      
-      -- Print other entries
-      print("📦 Other")
-      for _, entry in ipairs(otherEntries) do
-          print(string.format("%s | Y = %d", entry.Name, entry.YPosition))
-      end
-      
-      print("\n-------------------------\n")
-      
-            
-   end,
-}) 
-
-local AutoFarmSection = BGSI:CreateSection("AutoFarm")
-
-local PickupToggle = BGSI:CreateToggle({
-   Name = "AutoFarm Pickups",
-   CurrentValue = false,
-   Flag = "AutoFarmPickups",
-   Callback = function(Value)
-      _G.collectingPickups = Value
-
+      -- Set the global variable based on toggle state
+      _G.blowingBubbles = Value
+ 
+      -- If enabled, start the bubble blowing script
       if Value then
          spawn(function()
-            local function isUUID(str)
-               local pattern = "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$"
-               return type(str) == "string" and string.match(str, pattern) ~= nil
-            end
-
-            while _G.collectingPickups do
-               local success, errorMsg = pcall(function()
-                  local chunkerFolders = {}
-
-                  -- Collect all streamed-in Chunker folders with UUID children
-                  for _, folder in ipairs(workspace:GetDescendants()) do
-                     if folder:IsA("Folder") and folder.Name == "Chunker" then
-                        for _, child in ipairs(folder:GetChildren()) do
-                           if child and isUUID(child.Name) then
-                              table.insert(chunkerFolders, folder)
-                              break
-                           end
-                        end
-                     end
-                  end
-
-                  -- If no Chunker folders are found (streaming out), skip the loop cycle
-                  if #chunkerFolders == 0 then
-                     warn("No Chunker folders found in current streamed area. Skipping collection cycle.")
-                     return
-                  end
-
-                  -- Handle pickups from all active Chunker folders
-                  for _, chunker in ipairs(chunkerFolders) do
-                     for _, pickup in ipairs(chunker:GetChildren()) do
-                        if pickup
-                           and isUUID(pickup.Name)
-                           and (pickup:IsA("BasePart") or pickup:IsA("Model"))
-                           and not pickup:GetAttribute("Handled")
-                           and pickup:IsDescendantOf(workspace)
-                           and pickup.Parent == chunker then
-
-                           pickup:SetAttribute("Handled", true)
-
-                           local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
-                           if remotes then
-                              local pickupsFolder = remotes:FindFirstChild("Pickups")
-                              if pickupsFolder then
-                                 local collectPickup = pickupsFolder:FindFirstChild("CollectPickup")
-                                 if collectPickup then
-                                    -- Fire remote to collect
-                                    pcall(function()
-                                       collectPickup:FireServer(pickup.Name)
-                                    end)
-
-                                    -- Soft remove the pickup to avoid parent-lock issues
-                                    pcall(function()
-                                       if pickup:IsDescendantOf(workspace) then
-                                          pickup.Parent = nil
-                                       end
-                                    end)
-
-                                    -- Fully destroy after short delay
-                                    task.delay(5, function()
-                                       if pickup and pickup:GetAttribute("Handled") then
-                                          pcall(function()
-                                             pickup:Destroy()
-                                          end)
-                                       end
-                                    end)
-                                 end
-                              end
-                           end
-                        end
-                     end
-                  end
-               end)
-
-               -- Log errors if they occur
-               if not success then
-                  warn("Error in pickup collection: " .. tostring(errorMsg))
-               end
-
-               wait(4) -- Reduced loop delay to 4 seconds
+            while _G.blowingBubbles do
+               local args = {
+                  "BlowBubble"
+               }
+               game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer(unpack(args))
+               wait(0.5)
             end
          end)
       end
    end,
-})
-
-
-
-
-
-
-local BubbleToggle = BGSI:CreateToggle({
-  Name = "AutoFarm Bubbles",
-  CurrentValue = false,
-  Flag = "AutoFarmBubbles",
-  Callback = function(Value)
-     -- Set the global variable based on toggle state
-     _G.blowingBubbles = Value
-     
-     -- If enabled, start the bubble blowing script
-     if Value then
-        spawn(function()
-           while _G.blowingBubbles do
-              local args = {
-                 "BlowBubble"
-              }
-              game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer(unpack(args))
-              wait(0.5)
-           end
-        end)
-     end
-  end,
-})
-local DoggyJumpToggle = BGSI:CreateToggle({
-  Name = "AutoFarm Doggy Jump",
-  CurrentValue = false,
-  Flag = "AutoFarmDoggyJump",
-  Callback = function(Value)
-     -- Set the global variable based on toggle state
-     _G.autoFarmingDoggyJump = Value
-     
-     -- If enabled, start the Doggy Jump win script
-     if Value then
-        spawn(function()
-           while _G.autoFarmingDoggyJump do
-              local args = {
-                 [1] = "DoggyJumpWin",
-                 [2] = 3
-              }
-              game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer(unpack(args))
-              wait(120) -- Wait 2 minutes (120 seconds)
-           end
-        end)
-     end
-  end,
-})
-
--- Looping function that checks for royal-chest every 10 seconds
-local function checkForRoyalChest()
-    while true do
-        wait(10)  -- Wait for 10 seconds before checking again
-
-        local riftFolder = workspace.Rendered.Rifts
-        for _, child in pairs(riftFolder:GetChildren()) do
-            local originalName = child.Name
-
-            -- Check if the child is a royal-chest and it doesn't have the "Notified" attribute
-            if originalName:lower() == "royal-chest" then
-                if not child:GetAttribute("Notified") then
-                    local yPosition = math.floor(child.WorldPivot.Position.Y)
-                    -- Notify about the royal chest spawn
-                    Rayfield:Notify({
-                        Title = "Royal Chest Spawned", 
-                        Content = "Royal Chest | Y Position: " .. yPosition, 
-                        Duration = 6.5,
-                        Image = 4483362458,
-                    })
-                    -- Mark this royal chest as notified
-                    child:SetAttribute("Notified", true)
-                end
+ })
+ local DoggyJumpToggle = BGSI:CreateToggle({
+   Name = "AutoFarm Doggy Jump",
+   CurrentValue = false,
+   Flag = "AutoFarmDoggyJump",
+   Callback = function(Value)
+      -- Set the global variable based on toggle state
+      _G.autoFarmingDoggyJump = Value
+ 
+      -- If enabled, start the Doggy Jump win script
+      if Value then
+         spawn(function()
+            while _G.autoFarmingDoggyJump do
+               local args = {
+                  [1] = "DoggyJumpWin",
+                  [2] = 3
+               }
+               game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer(unpack(args))
+               wait(120) -- Wait 2 minutes (120 seconds)
             end
-        end
-    end
-end
-
--- Call the function to start checking for royal chests
-checkForRoyalChest()
+         end)
+      end
+   end,
+ })
+ 
+ -- Looping function that checks for royal-chest every 10 seconds
+ local function checkForRoyalChest()
+     while true do
+         wait(10)  -- Wait for 10 seconds before checking again
+ 
+         local riftFolder = workspace.Rendered.Rifts
+         for _, child in pairs(riftFolder:GetChildren()) do
+             local originalName = child.Name
+ 
+             -- Check if the child is a royal-chest and it doesn't have the "Notified" attribute
+             if originalName:lower() == "royal-chest" then
+                 if not child:GetAttribute("Notified") then
+                     local yPosition = math.floor(child.WorldPivot.Position.Y)
+                     -- Notify about the royal chest spawn
+                     Rayfield:Notify({
+                         Title = "Royal Chest Spawned", 
+                         Content = "Royal Chest | Y Position: " .. yPosition, 
+                         Duration = 6.5,
+                         Image = 4483362458,
+                     })
+                     -- Mark this royal chest as notified
+                     child:SetAttribute("Notified", true)
+                 end
+             end
+         end
+     end
+ end
+ 
+ -- Call the function to start checking for royal chests
+ checkForRoyalChest()
