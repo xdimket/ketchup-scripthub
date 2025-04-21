@@ -389,7 +389,11 @@ local RiftParagraph = BGSI:CreateParagraph({
 })
 
 local function getRiftsInfo()
-    local riftFolder = workspace.Rendered.Rifts
+    local riftFolder = workspace:FindFirstChild("Rendered") and workspace.Rendered:FindFirstChild("Rifts")
+    if not riftFolder then
+        return "❌ Rifts folder not found."
+    end
+
     local eggEntries = {}
     local otherEntries = {}
 
@@ -406,8 +410,13 @@ local function getRiftsInfo()
     for _, child in pairs(riftFolder:GetChildren()) do
         local originalName = child.Name
         local displayName = originalName
-        local yPosition = math.floor(child.WorldPivot.Position.Y)
+        local yPosition = 0
 
+        pcall(function()
+            yPosition = math.floor(child.WorldPivot.Position.Y)
+        end)
+
+        -- Special name overrides
         if originalName:lower() == "event-2" then
             displayName = "pastel-egg"
         elseif originalName:lower() == "event-1" then
@@ -418,15 +427,20 @@ local function getRiftsInfo()
             local multiplier = "N/A"
             local duration = "N/A"
 
-            local success, result = pcall(function()
-                return child.Display.SurfaceGui.Icon.Luck.Text
+            pcall(function()
+                multiplier = child:FindFirstChild("Display", true)
+                    and child.Display:FindFirstChild("SurfaceGui", true)
+                    and child.Display.SurfaceGui:FindFirstChild("Icon", true)
+                    and child.Display.SurfaceGui.Icon:FindFirstChild("Luck")
+                    and child.Display.SurfaceGui.Icon.Luck.Text or "N/A"
             end)
-            if success then multiplier = result end
 
-            success, result = pcall(function()
-                return child.Display.SurfaceGui.Timer.Text
+            pcall(function()
+                duration = child:FindFirstChild("Display", true)
+                    and child.Display:FindFirstChild("SurfaceGui", true)
+                    and child.Display.SurfaceGui:FindFirstChild("Timer")
+                    and child.Display.SurfaceGui.Timer.Text or "N/A"
             end)
-            if success then duration = result end
 
             table.insert(eggEntries, {
                 Name = formatEggName(displayName),
@@ -468,16 +482,21 @@ task.spawn(function()
     while true do
         local success, result = pcall(getRiftsInfo)
         if success then
-            RiftsParagraph:Set({
+            RiftParagraph:Set({
                 Title = "Rifts Info",
                 Content = result
             })
         else
-            warn("Error updating Rift info: " .. tostring(result))
+            RiftParagraph:Set({
+                Title = "Rifts Info",
+                Content = "❌ Error updating Rift info:\n" .. tostring(result)
+            })
+            warn("Rift paragraph error: " .. tostring(result))
         end
         task.wait(5)
     end
 end)
+
 
  
  local AutoFarmSection = BGSI:CreateSection("AutoFarm")
