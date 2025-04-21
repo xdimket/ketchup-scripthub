@@ -383,124 +383,6 @@
     end,
  })
  
-local RiftParagraph = BGSI:CreateParagraph({
-    Title = "Rifts Info",
-    Content = "⏳ Loading Rift Info..."
-})
-
-local function getRiftsInfo()
-    local eggEntries = {}
-    local otherEntries = {}
-
-    local function formatEggName(name)
-        name = name:gsub("[-_]egg$", "")
-        name = name:gsub("^%l", string.upper)
-        return name .. " Egg"
-    end
-
-    local function sortByYPosition(a, b)
-        return a.YPosition < b.YPosition
-    end
-
-    local rendered = workspace:FindFirstChild("Rendered")
-    if not rendered then return "❌ 'Rendered' folder not found." end
-
-    local riftFolder = rendered:FindFirstChild("Rifts")
-    if not riftFolder then return "❌ 'Rifts' folder not found." end
-
-    for _, child in ipairs(riftFolder:GetChildren()) do
-        local originalName = child.Name
-        local displayName = originalName
-        local yPosition = 0
-        pcall(function()
-            yPosition = math.floor(child.WorldPivot.Position.Y)
-        end)
-
-        if originalName:lower() == "event-2" then
-            displayName = "pastel-egg"
-        elseif originalName:lower() == "event-1" then
-            displayName = "bunny-egg"
-        end
-
-        if displayName:lower():sub(-4) == "-egg" then
-            local multiplier = "N/A"
-            local duration = "N/A"
-
-            pcall(function()
-                local luckText = child:FindFirstChild("Display", true)
-                    and child.Display:FindFirstChild("SurfaceGui", true)
-                    and child.Display.SurfaceGui:FindFirstChild("Icon", true)
-                    and child.Display.SurfaceGui.Icon:FindFirstChild("Luck")
-                if luckText and luckText.Text then
-                    multiplier = luckText.Text
-                end
-            end)
-
-            pcall(function()
-                local timerText = child:FindFirstChild("Display", true)
-                    and child.Display:FindFirstChild("SurfaceGui", true)
-                    and child.Display.SurfaceGui:FindFirstChild("Timer")
-                if timerText and timerText.Text then
-                    duration = timerText.Text
-                end
-            end)
-
-            table.insert(eggEntries, {
-                Name = formatEggName(displayName),
-                YPosition = yPosition,
-                Multiplier = multiplier,
-                Duration = duration
-            })
-        else
-            table.insert(otherEntries, {
-                Name = displayName,
-                YPosition = yPosition
-            })
-        end
-    end
-
-    table.sort(eggEntries, sortByYPosition)
-    table.sort(otherEntries, sortByYPosition)
-
-    local lines = {}
-    table.insert(lines, "🥚 Eggs")
-    for _, entry in ipairs(eggEntries) do
-        table.insert(lines, string.format("%s %s | Y = %d | Duration: %s", entry.Multiplier, entry.Name, entry.YPosition, entry.Duration))
-    end
-
-    table.insert(lines, "\n-------------------------\n")
-    table.insert(lines, "📦 Other")
-    for _, entry in ipairs(otherEntries) do
-        table.insert(lines, string.format("%s | Y = %d", entry.Name, entry.YPosition))
-    end
-
-    table.insert(lines, "\n-------------------------\n")
-    return table.concat(lines, "\n")
-end
-
--- Auto-updating loop
-task.spawn(function()
-    print("✅ Rifts Loop Started")
-    while true do
-        local success, result = pcall(getRiftsInfo)
-        if success then
-            RiftParagraph:Set({
-                Title = "Rifts Info",
-                Content = result
-            })
-        else
-            RiftParagraph:Set({
-                Title = "Rifts Info",
-                Content = "❌ Error updating rift info: " .. tostring(result)
-            })
-        end
-        task.wait(5)
-    end
-end)
-
-
-
-
  
  local AutoFarmSection = BGSI:CreateSection("AutoFarm")
  
@@ -649,33 +531,119 @@ end)
    end,
  })
  
- -- Looping function that checks for royal-chest every 10 seconds
- local function checkForRoyalChest()
-     while true do
-         wait(10)  -- Wait for 10 seconds before checking again
- 
-         local riftFolder = workspace.Rendered.Rifts
-         for _, child in pairs(riftFolder:GetChildren()) do
-             local originalName = child.Name
- 
-             -- Check if the child is a royal-chest and it doesn't have the "Notified" attribute
-             if originalName:lower() == "royal-chest" then
-                 if not child:GetAttribute("Notified") then
-                     local yPosition = math.floor(child.WorldPivot.Position.Y)
-                     -- Notify about the royal chest spawn
-                     Rayfield:Notify({
-                         Title = "Royal Chest Spawned", 
-                         Content = "Royal Chest | Y Position: " .. yPosition, 
-                         Duration = 6.5,
-                         Image = 4483362458,
-                     })
-                     -- Mark this royal chest as notified
-                     child:SetAttribute("Notified", true)
-                 end
-             end
-         end
-     end
- end
- 
- -- Call the function to start checking for royal chests
- checkForRoyalChest()
+local InfoSection = BGSI:CreateSection("Information")
+
+local RiftParagraph = BGSI:CreateParagraph({
+    Title = "Rifts Info",
+    Content = "⏳ Loading Rift Info..."
+})
+
+local function getRiftsInfo()
+    local eggEntries = {}
+    local otherEntries = {}
+
+    local function formatEggName(name)
+        name = name:gsub("[-_]egg$", "")
+        name = name:gsub("^%l", string.upper)
+        return name .. " Egg"
+    end
+
+    local function sortByYPosition(a, b)
+        return a.YPosition < b.YPosition
+    end
+
+    local rendered = workspace:FindFirstChild("Rendered")
+    if not rendered then return "❌ 'Rendered' folder not found." end
+
+    local riftFolder = rendered:FindFirstChild("Rifts")
+    if not riftFolder then return "❌ 'Rifts' folder not found." end
+
+    for _, child in ipairs(riftFolder:GetChildren()) do
+        local originalName = child.Name
+        local displayName = originalName
+        local yPosition = 0
+        pcall(function()
+            yPosition = math.floor(child.WorldPivot.Position.Y)
+        end)
+
+        if originalName:lower() == "event-2" then
+            displayName = "pastel-egg"
+        elseif originalName:lower() == "event-1" then
+            displayName = "bunny-egg"
+        end
+
+        if displayName:lower():sub(-4) == "-egg" then
+            local multiplier = "N/A"
+            local duration = "N/A"
+
+            pcall(function()
+                local luckText = child:FindFirstChild("Display", true)
+                    and child.Display:FindFirstChild("SurfaceGui", true)
+                    and child.Display.SurfaceGui:FindFirstChild("Icon", true)
+                    and child.Display.SurfaceGui.Icon:FindFirstChild("Luck")
+                if luckText and luckText.Text then
+                    multiplier = luckText.Text
+                end
+            end)
+
+            pcall(function()
+                local timerText = child:FindFirstChild("Display", true)
+                    and child.Display:FindFirstChild("SurfaceGui", true)
+                    and child.Display.SurfaceGui:FindFirstChild("Timer")
+                if timerText and timerText.Text then
+                    duration = timerText.Text
+                end
+            end)
+
+            table.insert(eggEntries, {
+                Name = formatEggName(displayName),
+                YPosition = yPosition,
+                Multiplier = multiplier,
+                Duration = duration
+            })
+        else
+            table.insert(otherEntries, {
+                Name = displayName,
+                YPosition = yPosition
+            })
+        end
+    end
+
+    table.sort(eggEntries, sortByYPosition)
+    table.sort(otherEntries, sortByYPosition)
+
+    local lines = {}
+    table.insert(lines, "🥚 Eggs")
+    for _, entry in ipairs(eggEntries) do
+        table.insert(lines, string.format("%s %s | Y = %d | Duration: %s", entry.Multiplier, entry.Name, entry.YPosition, entry.Duration))
+    end
+
+    table.insert(lines, "\n-------------------------\n")
+    table.insert(lines, "📦 Other")
+    for _, entry in ipairs(otherEntries) do
+        table.insert(lines, string.format("%s | Y = %d", entry.Name, entry.YPosition))
+    end
+
+    table.insert(lines, "\n-------------------------\n")
+    return table.concat(lines, "\n")
+end
+
+-- Auto-updating loop
+task.spawn(function()
+    print("✅ Rifts Loop Started")
+    while true do
+        local success, result = pcall(getRiftsInfo)
+        if success then
+            RiftParagraph:Set({
+                Title = "Rifts Info",
+                Content = result
+            })
+        else
+            RiftParagraph:Set({
+                Title = "Rifts Info",
+                Content = "❌ Error updating rift info: " .. tostring(result)
+            })
+        end
+        task.wait(5)
+    end
+end)
