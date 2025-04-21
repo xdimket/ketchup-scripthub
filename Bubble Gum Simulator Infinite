@@ -385,35 +385,10 @@
  
 local RiftParagraph = BGSI:CreateParagraph({
     Title = "Rifts Info",
-    Content = "⏳ Starting debug..."
+    Content = "⏳ Loading Rift Info..."
 })
 
-local function debugLog(message)
-    warn("[Rift Debug] " .. message)
-end
-
 local function getRiftsInfo()
-    local debugMessages = {}
-    local function log(msg)
-        table.insert(debugMessages, msg)
-        debugLog(msg)
-    end
-
-    log("Searching for Rendered.Rifts folder...")
-    local rendered = workspace:FindFirstChild("Rendered")
-    if not rendered then
-        log("❌ 'Rendered' folder not found in workspace.")
-        return table.concat(debugMessages, "\n")
-    end
-
-    local riftFolder = rendered:FindFirstChild("Rifts")
-    if not riftFolder then
-        log("❌ 'Rifts' folder not found inside Rendered.")
-        return table.concat(debugMessages, "\n")
-    end
-
-    log("✅ Found Rifts folder. Scanning children...")
-
     local eggEntries = {}
     local otherEntries = {}
 
@@ -427,20 +402,20 @@ local function getRiftsInfo()
         return a.YPosition < b.YPosition
     end
 
-    local children = riftFolder:GetChildren()
-    log("Found " .. tostring(#children) .. " Rift entries.")
+    local rendered = workspace:FindFirstChild("Rendered")
+    if not rendered then return "❌ 'Rendered' folder not found." end
 
-    for _, child in ipairs(children) do
+    local riftFolder = rendered:FindFirstChild("Rifts")
+    if not riftFolder then return "❌ 'Rifts' folder not found." end
+
+    for _, child in ipairs(riftFolder:GetChildren()) do
         local originalName = child.Name
         local displayName = originalName
-        log("Processing: " .. originalName)
-
         local yPosition = 0
         pcall(function()
             yPosition = math.floor(child.WorldPivot.Position.Y)
         end)
 
-        -- Special overrides
         if originalName:lower() == "event-2" then
             displayName = "pastel-egg"
         elseif originalName:lower() == "event-1" then
@@ -451,36 +426,24 @@ local function getRiftsInfo()
             local multiplier = "N/A"
             local duration = "N/A"
 
-            log("Detected egg-type: " .. displayName)
-
-            -- Try to get Multiplier
-            local success1, result1 = pcall(function()
+            pcall(function()
                 local luckText = child:FindFirstChild("Display", true)
                     and child.Display:FindFirstChild("SurfaceGui", true)
                     and child.Display.SurfaceGui:FindFirstChild("Icon", true)
                     and child.Display.SurfaceGui.Icon:FindFirstChild("Luck")
-                return luckText and luckText.Text or "N/A"
+                if luckText and luckText.Text then
+                    multiplier = luckText.Text
+                end
             end)
-            if success1 then
-                multiplier = result1
-                log("✔️ Multiplier: " .. multiplier)
-            else
-                log("⚠️ Failed to get multiplier.")
-            end
 
-            -- Try to get Duration
-            local success2, result2 = pcall(function()
+            pcall(function()
                 local timerText = child:FindFirstChild("Display", true)
                     and child.Display:FindFirstChild("SurfaceGui", true)
                     and child.Display.SurfaceGui:FindFirstChild("Timer")
-                return timerText and timerText.Text or "N/A"
+                if timerText and timerText.Text then
+                    duration = timerText.Text
+                end
             end)
-            if success2 then
-                duration = result2
-                log("✔️ Duration: " .. duration)
-            else
-                log("⚠️ Failed to get duration.")
-            end
 
             table.insert(eggEntries, {
                 Name = formatEggName(displayName),
@@ -489,7 +452,6 @@ local function getRiftsInfo()
                 Duration = duration
             })
         else
-            log("Other entry: " .. displayName)
             table.insert(otherEntries, {
                 Name = displayName,
                 YPosition = yPosition
@@ -513,13 +475,12 @@ local function getRiftsInfo()
     end
 
     table.insert(lines, "\n-------------------------\n")
-    log("✅ Rift info successfully compiled.")
-    return table.concat(debugMessages, "\n") .. "\n\n" .. table.concat(lines, "\n")
+    return table.concat(lines, "\n")
 end
 
 -- Auto-updating loop
 task.spawn(function()
-    debugLog("⏳ Rift updater loop started.")
+    print("✅ Rifts Loop Started")
     while true do
         local success, result = pcall(getRiftsInfo)
         if success then
@@ -528,16 +489,15 @@ task.spawn(function()
                 Content = result
             })
         else
-            local errorMessage = "❌ Unexpected error in updater: " .. tostring(result)
             RiftParagraph:Set({
                 Title = "Rifts Info",
-                Content = errorMessage
+                Content = "❌ Error updating rift info: " .. tostring(result)
             })
-            debugLog(errorMessage)
         end
         task.wait(5)
     end
 end)
+
 
 
 
