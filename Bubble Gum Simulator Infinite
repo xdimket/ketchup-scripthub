@@ -348,27 +348,7 @@
        end
     end,
  })
- local spinLoop
- 
- local AutoClaimWheelSpinToggle = BGSI:CreateToggle({
-    Name = "Auto Claim Free Wheel Spin",
-    CurrentValue = false,
-    Flag = "AutoClaimWheelSpin",
-    Callback = function(v)
-       if v then
-          spinLoop = task.spawn(function()
-             while true do
-                game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(unpack({"ClaimFreeWheelSpin"}))
-                task.wait(60)
-             end
-          end)
-       else
-          if spinLoop then task.cancel(spinLoop) spinLoop = nil end
-       end
-    end,
- })
- 
- 
+
  local EnchantsToggle = BGSI:CreateToggle({
     Name = "Toggle Enchants Visibility",
     CurrentValue = false,
@@ -507,24 +487,27 @@
       end
    end,
  })
- local DoggyJumpToggle = BGSI:CreateToggle({
-   Name = "AutoFarm Doggy Jump",
+ local autoFarmClaimToggle = BGSI:CreateToggle({
+   Name = "Auto Claim All",
    CurrentValue = false,
-   Flag = "AutoFarmDoggyJump",
+   Flag = "AutoFarmClaim",
    Callback = function(Value)
       -- Set the global variable based on toggle state
-      _G.autoFarmingDoggyJump = Value
+      _G.autoFarmingClaim = Value
  
-      -- If enabled, start the Doggy Jump win script
+      -- If enabled, start the Auto Claim script
       if Value then
          spawn(function()
-            while _G.autoFarmingDoggyJump do
-               local args = {
-                  [1] = "DoggyJumpWin",
-                  [2] = 3
-               }
-               game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer(unpack(args))
-               wait(120) -- Wait 2 minutes (120 seconds)
+            while _G.autoFarmingClaim do
+               game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("DoggyJumpWin", 3)
+               game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimChest", "Giant Chest", true)
+               game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimChest", "Void Chest", true)
+               game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimFreeWheelSpin")
+               for i = 1, 9 do
+                  game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Function"):InvokeServer("ClaimPlaytime", i)
+               end
+
+               wait(10)
             end
          end)
       end
