@@ -72,7 +72,12 @@
        loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpyBeta.lua"))()
     end,
  })
- 
+  local SigmaSpyButton = MainTab:CreateButton({
+    Name = "SigmaSpy",
+    Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/depthso/Sigma-Spy/refs/heads/main/Main.lua"), "Sigma Spy")()
+    end,
+ })
  -- /////////////  SERVER JOINER SECTION  /////////////
  
  local ServerSection = MainTab:CreateSection("Server Joiner")
