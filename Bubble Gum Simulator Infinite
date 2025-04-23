@@ -341,33 +341,26 @@
  local BGSI = MainWindow:CreateTab("BGSI", 4483362458)
  local AccessSection = BGSI:CreateSection("Access")
  
- local WheelSpinToggle = BGSI:CreateToggle({
-    Name = "Toggle Wheel Spin Visibility",
-    CurrentValue = false,
-    Flag = "WheelSpinVisibility",
-    Callback = function(Value)
-       local wheelSpin = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WheelSpin
-       if wheelSpin.Visible == true then
-          wheelSpin.Visible = false
-       else
-          wheelSpin.Visible = true
-       end
-    end,
- })
+local WheelSpinButton = BGSI:CreateButton({
+   Name = "Toggle Wheel Spin Visibility",
+   Callback = function()
+      local wheelSpin = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("WheelSpin")
+      if wheelSpin then
+         wheelSpin.Visible = not wheelSpin.Visible
+      end
+   end,
+})
 
- local EnchantsToggle = BGSI:CreateToggle({
-    Name = "Toggle Enchants Visibility",
-    CurrentValue = false,
-    Flag = "EnchantsVisibility",
-    Callback = function(Value)
-       local enchants = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Enchants
-       if enchants.Visible == true then
-          enchants.Visible = false
-       else
-          enchants.Visible = true
-       end
-    end,
- })
+local EnchantsButton = BGSI:CreateButton({
+   Name = "Toggle Enchants Visibility",
+   Callback = function()
+      local enchants = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("Enchants")
+      if enchants then
+         enchants.Visible = not enchants.Visible
+      end
+   end,
+})
+
  
  
  local AutoFarmSection = BGSI:CreateSection("AutoFarm")
@@ -849,6 +842,8 @@ local ThemeDropdown = MiscTab:CreateDropdown({
     Callback = function(selectedName)
         -- selectedName is a string, not a table!
         local themeIdentifier = Themes[selectedName]
+	print(themeIdentifier)
+	print(MainWindow)
         if themeIdentifier and MainWindow then
             print("MainWindow:ModifyTheme('" .. themeIdentifier .. "')")
             MainWindow:ModifyTheme(themeIdentifier)
@@ -862,4 +857,5 @@ local ThemeDropdown = MiscTab:CreateDropdown({
 
 
 Rayfield:LoadConfiguration()
+autoFarmClaimToggle:Set(false)
 MainWindow.ModifyTheme('Ocean')
