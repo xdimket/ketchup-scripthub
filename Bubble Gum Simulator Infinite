@@ -14,9 +14,9 @@
     LoadingTitle = "Scripts",
     LoadingSubtitle = "by ketchup",
     ConfigurationSaving = {
-       Enabled = false,
-       FolderName = nil,
-       FileName = "Ketchup Hub"
+       Enabled = true,
+       FolderName = ketchup,
+       FileName = "bgsiconfig"
     },
     Discord = {
        Enabled = false,
@@ -635,3 +635,207 @@ task.spawn(function()
         task.wait(5)
     end
 end)
+local WebHookSection = BGSI:CreateSection("Webhook")
+local WebhookEnabled = false
+local WebhookURL = ""
+local DiscordUserTag = ""
+
+-- UI: Webhook URL Input
+local WebhookInput = BGSI:CreateInput({
+   Name = "Webhook URL",
+   CurrentValue = "",
+   PlaceholderText = "Enter Discord Webhook URL",
+   RemoveTextAfterFocusLost = false,
+   Flag = "Input_WebhookURL",
+   Callback = function(Text)
+       WebhookURL = Text
+   end,
+})
+
+-- UI: Discord User ID Input
+local DiscordTagInput = BGSI:CreateInput({
+   Name = "Discord User ID",
+   CurrentValue = "",
+   PlaceholderText = "Enter Discord User ID (e.g., 1073395...)",
+   RemoveTextAfterFocusLost = false,
+   Flag = "Input_DiscordID",
+   Callback = function(Text)
+       DiscordUserTag = "<@" .. Text .. ">"
+   end,
+})
+
+-- UI: Webhook Toggle
+local WebhookToggle = BGSI:CreateToggle({
+   Name = "Enable Webhook",
+   CurrentValue = false,
+   Flag = "Toggle_EnableWebhook",
+   Callback = function(Value)
+       WebhookEnabled = Value
+   end,
+})
+
+-- Script Dependencies
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+
+-- Get HTTP request function based on executor
+local requestFunc =
+    (syn and syn.request)
+    or (http and http.request)
+    or (http_request)
+    or (request)
+    or (fluxus and fluxus.request)
+    or (krnl and krnl.request)
+if not requestFunc then
+    error("No supported HTTP request function found in this executor.")
+end
+
+-- Pet data from the game
+local petData = require(ReplicatedStorage.Shared.Data.Pets)
+
+-- Rarity settings for Discord embed
+local RARITY_SETTINGS = {
+    Common = { color = 11842740, emoji = "⚪", title_format = "Common %s" },
+    Unique = { color = 2067276, emoji = "🟢", title_format = "Unique %s" },
+    Rare = { color = 2123412, emoji = "🔵", title_format = "Rare %s" },
+    Epic = { color = 10181046, emoji = "🟣", title_format = "Epic %s" },
+    Legendary = { color = 15844367, emoji = "🟡", title_format = "Legendary %s" },
+    Secret = { color = 15158332, emoji = "🔴", title_format = "**SECRET %s**" }
+}
+
+local function getFormattedTimestamp()
+    local now = DateTime.now()
+    local localTime = now:ToLocalTime()
+    local hour = localTime.Hour
+    local ampm = "AM"
+    if hour >= 12 then
+        ampm = "PM"
+        if hour > 12 then hour = hour - 12 end
+    elseif hour == 0 then hour = 12 end
+
+    local function pad(n) return n < 10 and "0" .. n or tostring(n) end
+    return string.format("%s/%s/%s at %d:%s %s", pad(localTime.Month), pad(localTime.Day), localTime.Year, hour, pad(localTime.Minute), ampm)
+end
+
+local function isHatchEggCall(method, data)
+    return method == "HatchEgg" and type(data) == "table" and type(data.Pets) == "table"
+end
+
+local function formatPetName(pet)
+    local prefix = ""
+    if pet.Mythic then prefix = prefix .. "**Mythic** " end
+    if pet.Shiny then prefix = prefix .. "**Shiny** " end
+    return prefix .. pet.Name
+end
+
+local function getPetRarity(petName)
+    return petData[petName] and petData[petName].Rarity or "Common"
+end
+
+local function getPetTag(petName)
+    return petData[petName] and petData[petName].Tag or nil
+end
+
+local function sendToWebhook(pet, isNew)
+    if not WebhookEnabled or WebhookURL == "" then return end
+
+    local petName = pet.Name
+    local petFormattedName = formatPetName(pet)
+    local rarity = getPetRarity(petName)
+    local tag = getPetTag(petName)
+    local rarityConfig = RARITY_SETTINGS[rarity] or RARITY_SETTINGS.Common
+
+    local footer = { text = "Hatched on " .. getFormattedTimestamp() }
+    if tag then footer.text = tag .. " • " .. footer.text end
+
+    local embed = {
+        title = string.format(rarityConfig.emoji .. " " .. rarityConfig.title_format, petFormattedName),
+        color = rarityConfig.color,
+        footer = footer
+    }
+
+    local payload = {
+        content = isNew and DiscordUserTag .. " **NEW PET DISCOVERED!**" or "",
+        embeds = {embed}
+    }
+
+    requestFunc({
+        Url = WebhookURL,
+        Method = "POST",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body = HttpService:JSONEncode(payload)
+    })
+end
+
+local function handleHatchedPets(pets)
+    for _, petEntry in ipairs(pets) do
+        if type(petEntry) == "table" and petEntry.Deleted == false then
+            local pet = petEntry.Pet
+            if pet and type(pet.Name) == "string" then
+                sendToWebhook(pet, petEntry.New)
+                task.wait(0.1)
+            end
+        end
+    end
+end
+
+local function hookRemote(remote)
+    remote.OnClientEvent:Connect(function(...)
+        local args = {...}
+        if isHatchEggCall(args[1], args[2]) then
+            handleHatchedPets(args[2].Pets)
+        end
+    end)
+end
+
+for _, obj in pairs(ReplicatedStorage:GetDescendants()) do
+    if obj:IsA("RemoteEvent") then
+        hookRemote(obj)
+    end
+end
+
+print("✅ [Enhanced Hatch Watcher Initialized]
+--/////////////////////////////////////////////////////////////////////////////////////////
+--/////////////////////////////////////////////////////////////////////////////////////////
+--/////////////////////////////////////////////////////////////////////////////////////////
+--//////////////////////////MISC///////////////////////////////////////////////////////////
+--/////////////////////////////////////////////////////////////////////////////////////////
+--/////////////////////////////////////////////////////////////////////////////////////////
+--/////////////////////////////////////////////////////////////////////////////////////////
+local MiscTab = MainWindow:CreateTab("Misc", 4483362458)
+local ThemeSection = MiscTab:CreateSection("Themes")
+local Themes = {
+    ["Default"] = "Default",
+    ["Amber Glow"] = "AmberGlow",
+    ["Amethyst"] = "Amethyst",
+    ["Bloom"] = "Bloom",
+    ["Dark Blue"] = "DarkBlue",
+    ["Green"] = "Green",
+    ["Light"] = "Light",
+    ["Ocean"] = "Ocean",
+    ["Serenity"] = "Serenity"
+}
+
+local ThemeNames = {}
+for name, _ in pairs(Themes) do
+    table.insert(ThemeNames, name)
+end
+
+table.sort(ThemeNames) -- Optional: sort alphabetically
+
+local ThemeDropdown = MainTab:CreateDropdown({
+    Name = "Select Theme",
+    Options = ThemeNames,
+    CurrentOption = {ThemeNames[1]},
+    MultipleOptions = false,
+    Flag = "Dropdown_ThemeSelector",
+    Callback = function(Options)
+        local selectedName = Options[1]
+        local themeIdentifier = Themes[selectedName]
+        if themeIdentifier and Window then
+            Window:ModifyTheme(themeIdentifier)
+        end
+    end,
+})
+
+Rayfield:LoadConfiguration()
