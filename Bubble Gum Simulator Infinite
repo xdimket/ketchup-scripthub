@@ -843,16 +843,20 @@ table.sort(ThemeNames) -- Optional: sort alphabetically
 local ThemeDropdown = MiscTab:CreateDropdown({
     Name = "Select Theme",
     Options = ThemeNames,
-    CurrentOption = ThemeNames[1], -- Not a table
+    CurrentOption = ThemeNames[1],
     MultipleOptions = false,
     Flag = "Dropdown_ThemeSelector",
     Callback = function(selectedName)
         local themeIdentifier = Themes[selectedName]
         if themeIdentifier and MainWindow then
+            print("MainWindow:ModifyTheme('" .. themeIdentifier .. "')")
             MainWindow:ModifyTheme(themeIdentifier)
+        else
+            warn("Invalid theme selection or MainWindow is nil")
         end
     end,
 })
+
 
 
 Rayfield:LoadConfiguration()
