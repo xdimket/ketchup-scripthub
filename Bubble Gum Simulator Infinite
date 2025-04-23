@@ -843,17 +843,17 @@ table.sort(ThemeNames) -- Optional: sort alphabetically
 local ThemeDropdown = MiscTab:CreateDropdown({
     Name = "Select Theme",
     Options = ThemeNames,
-    CurrentOption = {ThemeNames[1]},
+    CurrentOption = ThemeNames[1], -- Not a table
     MultipleOptions = false,
     Flag = "Dropdown_ThemeSelector",
-    Callback = function(Options)
-        local selectedName = Options[1]
+    Callback = function(selectedName)
         local themeIdentifier = Themes[selectedName]
         if themeIdentifier and MainWindow then
             MainWindow:ModifyTheme(themeIdentifier)
         end
     end,
 })
+
 
 Rayfield:LoadConfiguration()
 MainWindow.ModifyTheme('Ocean')
