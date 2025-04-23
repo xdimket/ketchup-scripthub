@@ -831,27 +831,30 @@ for name, _ in pairs(Themes) do
     table.insert(ThemeNames, name)
 end
 
-table.sort(ThemeNames) -- Optional: sort alphabetically
+table.sort(ThemeNames)
 
 local ThemeDropdown = MiscTab:CreateDropdown({
     Name = "Select Theme",
     Options = ThemeNames,
-    CurrentOption = ThemeNames[1],
+    CurrentOption = {ThemeNames[1]},
     MultipleOptions = false,
     Flag = "Dropdown_ThemeSelector",
-    Callback = function(selectedName)
-        -- selectedName is a string, not a table!
+    Callback = function(Options)
+        print("Dropdown Options:", Options)
+        local selectedName = Options[1]
+        print("Selected Name:", selectedName)
         local themeIdentifier = Themes[selectedName]
-	print(themeIdentifier)
-	print(MainWindow)
+        print("Theme Identifier:", themeIdentifier)
+
         if themeIdentifier and MainWindow then
-            print("MainWindow:ModifyTheme('" .. themeIdentifier .. "')")
+            print("Changing theme to:", themeIdentifier)
             MainWindow:ModifyTheme(themeIdentifier)
         else
-            warn("Invalid theme selection or MainWindow is nil")
+            warn("Invalid theme selection or MainWindow is nil.")
         end
     end,
 })
+
 
 
 
