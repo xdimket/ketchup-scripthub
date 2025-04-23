@@ -7,6 +7,23 @@
  vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
  end)
  
+ local Chunker = require(game:GetService("ReplicatedStorage").Shared.Utils.Chunker)
+
+ -- Override the Update method to load everything and never unload
+ function Chunker.Update(self, position)
+ 	for coord, chunk in pairs(self._chunks) do
+ 		if not self._loaded[coord] then
+ 			for _, item in ipairs(chunk) do
+ 				if typeof(item) == "Instance" then
+ 					item.Parent = self._folder
+ 				end
+ 				self.Loaded:Fire(item, coord)
+ 			end
+ 			self._loaded[coord] = true
+ 		end
+ 	end
+ end
+
  Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
  
  MainWindow = Rayfield:CreateWindow({
@@ -371,6 +388,7 @@
  
  local AutoFarmSection = BGSI:CreateSection("AutoFarm")
  
+ 
  local PickupToggle = BGSI:CreateToggle({
     Name = "AutoFarm Pickups",
     CurrentValue = false,
@@ -400,13 +418,6 @@
                          end
                       end
                    end
- 
-                   -- If no Chunker folders are found (streaming out), skip the loop cycle
-                   if #chunkerFolders == 0 then
-                      warn("No Chunker folders found in current streamed area. Skipping collection cycle.")
-                      return
-                   end
- 
                    -- Handle pickups from all active Chunker folders
                    for _, chunker in ipairs(chunkerFolders) do
                       for _, pickup in ipairs(chunker:GetChildren()) do
