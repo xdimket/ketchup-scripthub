@@ -856,4 +856,4 @@ local ThemeDropdown = MiscTab:CreateDropdown({
 })
 
 Rayfield:LoadConfiguration()
-Window.ModifyTheme('Ocean')
+MainWindow.ModifyTheme('Ocean')
