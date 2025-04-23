@@ -841,14 +841,21 @@ local ThemeDropdown = MiscTab:CreateDropdown({
     Flag = "Dropdown_ThemeSelector",
     Callback = function(Options)
         local selectedName = Options[1]
+        print("Selected Name from Dropdown:", selectedName)
+
         local themeIdentifier = Themes[selectedName]
+        print("Resolved Theme Identifier:", themeIdentifier)
+	print(themeIdentifier)
+	print(MainWindow)
         if themeIdentifier and MainWindow then
+            print("Applying theme:", themeIdentifier)
             MainWindow.ModifyTheme(themeIdentifier)
         else
-            warn("Invalid theme selection or MainWindow is nil.")
+            warn("Invalid theme selection or MainWindow is nil")
         end
     end,
 })
+
 
 
 
