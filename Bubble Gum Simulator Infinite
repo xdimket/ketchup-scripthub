@@ -849,7 +849,7 @@ local ThemeDropdown = MiscTab:CreateDropdown({
     Callback = function(Options)
         local selectedName = Options[1]
         local themeIdentifier = Themes[selectedName]
-        if themeIdentifier and Window then
+        if themeIdentifier and MainWindow then
             MainWindow:ModifyTheme(themeIdentifier)
         end
     end,
