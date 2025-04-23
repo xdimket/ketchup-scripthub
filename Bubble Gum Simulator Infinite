@@ -815,15 +815,15 @@ end
 local MiscTab = MainWindow:CreateTab("Misc", 4483362458)
 local ThemeSection = MiscTab:CreateSection("Themes")
 local Themes = {
-    ["Default"] = "Default",
-    ["Amber Glow"] = "AmberGlow",
-    ["Amethyst"] = "Amethyst",
-    ["Bloom"] = "Bloom",
-    ["Dark Blue"] = "DarkBlue",
-    ["Green"] = "Green",
-    ["Light"] = "Light",
-    ["Ocean"] = "Ocean",
-    ["Serenity"] = "Serenity"
+    ["Default"] = 'Default',
+    ["Amber Glow"] = 'AmberGlow',
+    ["Amethyst"] = 'Amethyst',
+    ["Bloom"] = 'Bloom',
+    ["Dark Blue"] = 'DarkBlue',
+    ["Green"] = 'Green',
+    ["Light"] = 'Light',
+    ["Ocean"] = 'Ocean',
+    ["Serenity"] = 'Serenity'
 }
 
 local ThemeNames = {}
@@ -848,6 +848,8 @@ local ThemeDropdown = MiscTab:CreateDropdown({
 
         if themeIdentifier and MainWindow then
             print("Changing theme to:", themeIdentifier)
+            print(MainWindow)
+	    print(themeIdentifier)
             MainWindow:ModifyTheme(themeIdentifier)
         else
             warn("Invalid theme selection or MainWindow is nil.")
