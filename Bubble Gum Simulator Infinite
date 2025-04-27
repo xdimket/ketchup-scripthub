@@ -15,7 +15,7 @@
     LoadingTitle = "Scripts",
     LoadingSubtitle = "by ketchup",
     ConfigurationSaving = {
-       Enabled = false,
+       Enabled = true,
        FolderName = ketchup,
        FileName = "bgsiconfig"
     },
@@ -518,34 +518,59 @@ local Chunker = require(game:GetService("ReplicatedStorage").Shared.Utils.Chunke
 -- Store original Update function to restore if needed
 local OriginalUpdate = Chunker.Update
 
-local Toggle = BGSI:CreateToggle({ 
-	Name = "Render Entire Map (For AutoFarm **LAG**)", 
-	CurrentValue = false,
-	Flag = "RenderEntireMapToggle",
-	Callback = function(Value)
-		if Value then
-			-- Override Chunker.Update to render all chunks
-			function Chunker:Update(position)
-				for coord, chunk in pairs(self._chunks) do
-					if not self._loaded[coord] then
-						for _, item in ipairs(chunk) do
-							if typeof(item) == "Instance" then
-								item.Parent = self._folder
-							end
-							self.Loaded:Fire(item, coord)
-						end
-						self._loaded[coord] = true
-					end
-				end
-			end
-		else
-			-- Restore the original Update function
-			Chunker.Update = OriginalUpdate
-		end
-	end,
+-- Store the original Update function before any modifications
+local OriginalUpdate = Chunker.Update 
+
+local forciblyLoadedChunks = {}
+
+local RenderToggle = BGSI:CreateToggle({ 
+    Name = "Render Entire Map (For AutoFarm **LAG**)", 
+    CurrentValue = false,
+    Flag = "RenderEntireMapToggle",
+    Callback = function(Value)
+        if Value then
+            -- Override Chunker.Update to render all chunks
+            function Chunker:Update(position)
+                for coord, chunk in pairs(self._chunks) do
+                    if not self._loaded[coord] then
+                        for _, item in ipairs(chunk) do
+                            if typeof(item) == "Instance" then
+                                item.Parent = self._folder
+                            end
+                            self.Loaded:Fire(item, coord)
+                        end
+                        self._loaded[coord] = true
+                        -- Track chunks we forcibly loaded
+                        table.insert(forciblyLoadedChunks, coord)
+                    end
+                end
+            end
+        else
+            -- Restore the original Update function
+            Chunker.Update = OriginalUpdate
+            
+            -- Clean up chunks that wouldn't normally be loaded
+            for _, coord in ipairs(forciblyLoadedChunks) do
+                local chunk = self._chunks[coord]
+                if chunk and self._loaded[coord] then
+                    for _, item in ipairs(chunk) do
+                        if typeof(item) == "Instance" then
+                            item.Parent = nil
+                        end
+                        self.Unloaded:Fire(item, coord)
+                    end
+                    self._loaded[coord] = false
+                end
+            end
+            
+            -- Clear the forcibly loaded chunks list
+            forciblyLoadedChunks = {}
+            
+            -- Force a normal update to refresh what should actually be shown
+            Chunker:Update(position or Vector3.new(0, 0, 0))
+        end
+    end,
 })
-
-
  
 local InfoSection = BGSI:CreateSection("Information")
 
@@ -881,4 +906,7 @@ local ThemeDropdown = MiscTab:CreateDropdown({
 Rayfield:LoadConfiguration()
 autoFarmClaimToggle:Set(true)
 WebhookToggle:Set(true)
+PickupToggle:Setfalse)
+BubbleToggle:Set(false)
+RenderToggle:Set(false)
 MainWindow.ModifyTheme('Ocean')
