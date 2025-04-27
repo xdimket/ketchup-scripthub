@@ -71,7 +71,20 @@ local SigmaSpyButton = MainTab:CreateButton({
        loadstring(game:HttpGet("https://raw.githubusercontent.com/depthso/Sigma-Spy/refs/heads/main/Main.lua"), "Sigma Spy")()
     end,
 })
-
+local HydroxideButton = MainTab:CreateButton({
+    Name = "Hydroxide",
+    Callback = function()
+       local owner = "Upbolt"
+       local branch = "revision"
+      
+       local function webImport(file)
+          return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/%s/Hydroxide/%s/%s.lua"):format(owner, branch, file)), file .. '.lua')()
+       end
+      
+       webImport("init")
+       webImport("ui/main")()
+    end,
+})
 -- /////////////  SERVER JOINER SECTION  /////////////
 
 local ServerSection = MainTab:CreateSection("Server Joiner")
