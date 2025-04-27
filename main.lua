@@ -48,12 +48,12 @@ local IYButton = MainTab:CreateButton({
 
 local DexSection = MainTab:CreateSection("Dex") -- Renamed here
 
-local DexButton = MainTab:CreateButton({
-   Name = "Dex",
-   Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/AlterX404/DarkDEX-V5/refs/heads/main/DarkDEX-V5"))()
-   end,
-})
+ local DexButton = MainTab:CreateButton({
+    Name = "Dex",
+    Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+    end,
+ })
 
 -- /////////////  REMOTES SECTION  /////////////
 
@@ -64,6 +64,12 @@ local RSpyButton = MainTab:CreateButton({
    Callback = function()
       loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpyBeta.lua"))()
    end,
+})
+local SigmaSpyButton = MainTab:CreateButton({
+    Name = "SigmaSpy",
+    Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/depthso/Sigma-Spy/refs/heads/main/Main.lua"), "Sigma Spy")()
+    end,
 })
 
 -- /////////////  SERVER JOINER SECTION  /////////////
