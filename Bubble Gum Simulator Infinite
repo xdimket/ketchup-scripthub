@@ -15,7 +15,7 @@
     LoadingTitle = "Scripts",
     LoadingSubtitle = "by ketchup",
     ConfigurationSaving = {
-       Enabled = true,
+       Enabled = false,
        FolderName = ketchup,
        FileName = "bgsiconfig"
     },
@@ -494,10 +494,11 @@ local EnchantsButton = BGSI:CreateButton({
             while _G.autoFarmingClaim do
                game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("DoggyJumpWin", 3)
                task.wait(0.5)
+	       game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WorldMap.Visible = true
                game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimChest", "Giant Chest", true)
-               task.wait(0.5)
                game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimChest", "Void Chest", true)
-               task.wait(0.5)
+               game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WorldMap.Visible = false
+	       task.wait(0.5)
                game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimFreeWheelSpin")
                task.wait(0.5)
                for i = 1, 9 do
@@ -878,5 +879,6 @@ local ThemeDropdown = MiscTab:CreateDropdown({
 
 
 Rayfield:LoadConfiguration()
-autoFarmClaimToggle:Set(false)
+autoFarmClaimToggle:Set(true)
+WebhookToggle:Set(true)
 MainWindow.ModifyTheme('Ocean')
