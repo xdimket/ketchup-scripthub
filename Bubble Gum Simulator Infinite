@@ -896,24 +896,33 @@ local ThemeDropdown = MiscTab:CreateDropdown({
         end
     end,
 })
-local PositionButton = MiscTab:CreateButton({ 
-   Name = "Copy Position", 
-   Callback = function()
-       -- Get the player's character and position
-       local player = game.Players.LocalPlayer
-       local character = player.Character or player.CharacterAdded:Wait()
-       local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-       local position = humanoidRootPart.Position
-       
-       -- Update the Paragraph content with the position as a Vector3
-       PositionParagraph:Set({
-           Title = "Current Position",
-           Content = "Position: " .. tostring(position)
-       })
-   end,
+
+-- Create the TextInput where the position will be displayed
+local PositionInput = MiscTab:CreateInput({
+    Name = "Position Input",
+    CurrentValue = "Click Button to Copy Position",
+    PlaceholderText = "Player's Position",
+    RemoveTextAfterFocusLost = false,
+    Flag = "PositionInput",
+    Callback = function(Text)
+        -- This is where the input value can be changed, but we are not using this for now.
+    end,
 })
 
-local PositionParagraph = MiscTab:CreateParagraph({Title = "Position", Content = "Click Button"})
+-- Create the Button to copy the position to the text input
+local PositionButton = MiscTab:CreateButton({
+    Name = "Copy Position",
+    Callback = function()
+        -- Get the player's character and position
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+        local position = humanoidRootPart.Position
+
+        -- Update the TextInput with the position as a Vector3 (no extra text)
+        PositionInput:Set(tostring(position))  -- Outputs as Vector3 (X, Y, Z)
+    end,
+})
 
 
 
@@ -923,6 +932,10 @@ local PositionParagraph = MiscTab:CreateParagraph({Title = "Position", Content =
 
 
 
+
+
+
+PositionInput:Set("Click Button Under")
 Rayfield:LoadConfiguration()
 autoFarmClaimToggle:Set(true)
 WebhookToggle:Set(true)
