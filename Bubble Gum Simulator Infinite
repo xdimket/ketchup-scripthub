@@ -512,27 +512,38 @@ local EnchantsButton = BGSI:CreateButton({
    end,
  })
 
-local RenderButton = BGSI:CreateButton({ 
-	Name = "Render Entire Map (For AutoFarm **LAG**)", 
-	Callback = function()
-		-- Override Chunker.Update to render all chunks
-		local Chunker = require(game:GetService("ReplicatedStorage").Shared.Utils.Chunker)
+local Chunker = require(game:GetService("ReplicatedStorage").Shared.Utils.Chunker)
 
-		function Chunker.Update(self, position)
-			for coord, chunk in pairs(self._chunks) do
-				if not self._loaded[coord] then
-					for _, item in ipairs(chunk) do
-						if typeof(item) == "Instance" then
-							item.Parent = self._folder
+-- Store original Update function to restore if needed
+local OriginalUpdate = Chunker.Update
+
+local Toggle = BGSI:CreateToggle({ 
+	Name = "Render Entire Map (For AutoFarm **LAG**)", 
+	CurrentValue = false,
+	Flag = "RenderEntireMapToggle",
+	Callback = function(Value)
+		if Value then
+			-- Override Chunker.Update to render all chunks
+			function Chunker:Update(position)
+				for coord, chunk in pairs(self._chunks) do
+					if not self._loaded[coord] then
+						for _, item in ipairs(chunk) do
+							if typeof(item) == "Instance" then
+								item.Parent = self._folder
+							end
+							self.Loaded:Fire(item, coord)
 						end
-						self.Loaded:Fire(item, coord)
+						self._loaded[coord] = true
 					end
-					self._loaded[coord] = true
 				end
 			end
+		else
+			-- Restore the original Update function
+			Chunker.Update = OriginalUpdate
 		end
 	end,
 })
+
 
  
 local InfoSection = BGSI:CreateSection("Information")
