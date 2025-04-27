@@ -906,14 +906,14 @@ local Button = MainTab:CreateButton({
        local position = humanoidRootPart.Position
        
        -- Update the Paragraph content with the position as a Vector3
-       Paragraph:Set({
+       PositionParagraph:Set({
            Title = "Current Position",
            Content = "Position: " .. tostring(position)
        })
    end,
 })
 
-local PositionParagraph = MiscTab:CreateParagraph({Title = "Position Vector", Content = "Click Button to get pos"})
+local PositionParagraph = MiscTab:CreateParagraph({Title = "Position", Content = "Click Button"})
 
 
 
