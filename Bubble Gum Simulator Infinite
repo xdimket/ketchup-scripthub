@@ -896,7 +896,7 @@ local ThemeDropdown = MiscTab:CreateDropdown({
         end
     end,
 })
-local Button = MainTab:CreateButton({ 
+local PositionButton = MiscTab:CreateButton({ 
    Name = "Copy Position", 
    Callback = function()
        -- Get the player's character and position
