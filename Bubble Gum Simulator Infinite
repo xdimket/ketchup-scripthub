@@ -896,6 +896,20 @@ local ThemeDropdown = MiscTab:CreateDropdown({
         end
     end,
 })
+local PositionButton = MiscTab:CreateButton({ 
+   Name = "Copy Position", 
+   Callback = function()
+       -- Get the player's character and position
+       local player = game.Players.LocalPlayer
+       local character = player.Character or player.CharacterAdded:Wait()
+       local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+       local position = humanoidRootPart.Position
+       
+       -- Print the position to the developer console so it can be manually copied
+       print("Current Position: " .. tostring(position))
+   end,
+})
+
 
 
 
