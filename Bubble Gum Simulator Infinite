@@ -906,7 +906,7 @@ local ThemeDropdown = MiscTab:CreateDropdown({
 Rayfield:LoadConfiguration()
 autoFarmClaimToggle:Set(true)
 WebhookToggle:Set(true)
-PickupToggle:Setfalse)
+PickupToggle:Set(false)
 BubbleToggle:Set(false)
 RenderToggle:Set(false)
 MainWindow.ModifyTheme('Ocean')
