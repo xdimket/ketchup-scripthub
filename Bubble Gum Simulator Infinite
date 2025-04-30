@@ -496,7 +496,9 @@ local EnchantsButton = BGSI:CreateButton({
                task.wait(0.5)
 	       game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WorldMap.Visible = true
                game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimChest", "Giant Chest", true)
+	       game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WorldMap.Visible = false
 	       task.wait(0.5)
+	       game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WorldMap.Visible = true
                game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimChest", "Void Chest", true)
                game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WorldMap.Visible = false
 	       task.wait(0.5)
