@@ -578,7 +578,7 @@ local RenderToggle = BGSI:CreateToggle({
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Constants
-local AlienShopLoopInterval = 16 * 60 -- 16 minutes in seconds
+local AlienShopLoopInterval = 5 * 60 -- 16 minutes in seconds
 local AlienShopFireDelay = 0.5 -- 0.5 seconds between each FireServer call
 
 -- State
