@@ -994,11 +994,9 @@ PickupToggle:Set(false)
 BubbleToggle:Set(false)
 RenderToggle:Set(false)
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+--local Players = game:GetService("Players")
+--local LocalPlayer = Players.LocalPlayer
 
--- Wait 8 minutes (480 seconds)
-task.wait(480)
+--task.wait(480)
 
--- Kick the local player with a custom message
-LocalPlayer:Kick("You were banned from this experience: Hyperion has detected illegal client modifications. Repeated exploiting will result in account suspension. UUID: 1097397698")
+--LocalPlayer:Kick("You were banned from this experience: Hyperion has detected illegal client modifications. Repeated exploiting will result in account suspension. UUID: 1097397698")
