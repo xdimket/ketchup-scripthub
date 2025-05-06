@@ -502,6 +502,10 @@ local EnchantsButton = BGSI:CreateButton({
                game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimChest", "Void Chest", true)
                game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WorldMap.Visible = false
 	       task.wait(0.5)
+	       game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WorldMap.Visible = true
+               game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimChest", "Ticket Chest", true)
+               game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WorldMap.Visible = false
+	       task.wait(0.5)
                game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer("ClaimFreeWheelSpin")
                task.wait(0.5)
                for i = 1, 9 do
@@ -509,7 +513,7 @@ local EnchantsButton = BGSI:CreateButton({
                   task.wait(0.5)
                end
 
-               wait(10)
+               wait(20)
             end
          end)
       end
@@ -618,6 +622,112 @@ local AlienShopToggle = BGSI:CreateToggle({
         AlienShopIsRunning = isToggled
         if AlienShopIsRunning then
             StartAlienShopLoop()
+        end
+    end,
+})
+-- Generated with sigma spy BOIIIIIIIII (+9999999 AURA)
+-- Parser version 1.0.9
+
+-- Services
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Config
+local DiceShopLoopInterval = 5 * 60 -- 5 minutes in seconds
+local DiceShopFireDelay = 0.5 -- 0.5 seconds between each FireServer call
+
+-- State
+local DiceShopIsRunning = false
+
+-- Functions
+local function StartDiceShopLoop()
+    task.spawn(function()
+        while DiceShopIsRunning do
+            for diceItemId = 1, 3 do
+                for fireCount = 1, 20 do
+                    if not DiceShopIsRunning then
+                        return -- Exit immediately if toggle is off
+                    end
+                    ReplicatedStorage:WaitForChild("Shared")
+                        :WaitForChild("Framework")
+                        :WaitForChild("Network")
+                        :WaitForChild("Remote")
+                        :WaitForChild("Event")
+                        :FireServer("BuyShopItem", "dice-shop", diceItemId)
+                    task.wait(DiceShopFireDelay)
+                end
+            end
+            task.wait(DiceShopLoopInterval)
+        end
+    end)
+end
+
+-- UI
+local DiceShopToggle = BGSI:CreateToggle({ 
+    Name = "Auto Buy Dice Shop",
+    CurrentValue = false,
+    Flag = "AutoBuyDiceShop",
+    Callback = function(isToggled)
+        DiceShopIsRunning = isToggled
+        if DiceShopIsRunning then
+            StartDiceShopLoop()
+        end
+    end,
+})
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Event = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event")
+
+local ClawMachineIsRunning = false
+
+local function StartClawMachineLoop()
+    task.spawn(function()
+        while ClawMachineIsRunning do
+            Event:FireServer("StartMinigame", "Robot Claw", "Insane")
+
+            local startTime = tick()
+            local connection
+
+            local function onMinigameStarted(eventName, data)
+                if eventName == "StartMinigame" and data.BonusItems then
+                    connection:Disconnect()
+                    local uuids = {}
+                    for uuid, _ in pairs(data.BonusItems) do table.insert(uuids, uuid) end
+                    task.spawn(function()
+                        for _, uuid in ipairs(uuids) do
+                            Event:FireServer("GrabMinigameItem", uuid)
+                            task.wait(math.random(250, 450) / 100)
+                        end
+                        task.wait(70)
+                        game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Prompt.Visible = False
+                    end)
+                end
+            end
+
+            connection = Event.OnClientEvent:Connect(onMinigameStarted)
+
+            -- Wait for 5 seconds or until we get the server response
+            while tick() - startTime < 5 do
+                if connection.Connected == false then break end
+                task.wait(0.1)
+            end
+
+            -- If no response in 5 seconds, disconnect the listener and continue
+            if connection.Connected then
+                connection:Disconnect()
+            end
+
+            task.wait(60)  -- Wait for 60 seconds before starting again
+        end
+    end)
+end
+
+local ClawMachineToggle = BGSI:CreateToggle({
+    Name = "Claw Machine Auto Start",
+    CurrentValue = false,
+    Flag = "AutoStartClawMachine",
+    Callback = function(isToggled)
+        ClawMachineIsRunning = isToggled
+        if ClawMachineIsRunning then
+            StartClawMachineLoop()
         end
     end,
 })
