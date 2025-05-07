@@ -491,15 +491,9 @@ local EnchantsButton = BGSI:CreateButton({
             spawn(function()
                 while _G.autoFarmingClaim do
                     local player = game:GetService("Players").LocalPlayer
-                    local gui = player.PlayerGui:WaitForChild("ScreenGui"):WaitForChild("WorldMap")
-                    local mapWasVisible = gui.Visible
+                    local mapgui = player.PlayerGui:WaitForChild("ScreenGui"):WaitForChild("WorldMap")
 
-                    local function safeToggleMap(on)
-                        if not mapWasVisible then
-                            gui.Visible = on
-                        end
-                    end
-
+                    -- Define remoteEvent and remoteFunction before using them
                     local remoteEvent = game:GetService("ReplicatedStorage")
                         :WaitForChild("Shared")
                         :WaitForChild("Framework")
@@ -514,38 +508,46 @@ local EnchantsButton = BGSI:CreateButton({
                         :WaitForChild("Remote")
                         :WaitForChild("Function")
 
+                    local function claimChest(chest)
+                        if mapgui.Visible then
+                            remoteEvent:FireServer("ClaimChest", chest, true)
+                        else
+                            mapgui.Visible = true
+                            remoteEvent:FireServer("ClaimChest", "Giant Chest", true)
+                            mapgui.Visible = false
+                        end
+                    end
+
+                    -- Trigger various claims
                     remoteEvent:FireServer("DoggyJumpWin", 3)
                     task.wait(0.5)
 
-                    safeToggleMap(true)
-                    remoteEvent:FireServer("ClaimChest", "Giant Chest", true)
-                    safeToggleMap(false)
+                    claimChest("Giant Chest")
                     task.wait(0.5)
 
-                    safeToggleMap(true)
-                    remoteEvent:FireServer("ClaimChest", "Void Chest", true)
-                    safeToggleMap(false)
+                    claimChest("Void Chest")
                     task.wait(0.5)
 
-                    safeToggleMap(true)
-                    remoteEvent:FireServer("ClaimChest", "Ticket Chest", true)
-                    safeToggleMap(false)
+                    claimChest("Ticket Chest")
                     task.wait(0.5)
 
                     remoteEvent:FireServer("ClaimFreeWheelSpin")
                     task.wait(0.5)
 
+                    -- Claim playtime for 9 rounds
                     for i = 1, 9 do
                         remoteFunction:InvokeServer("ClaimPlaytime", i)
                         task.wait(0.5)
                     end
 
+                    -- Wait for the next cycle
                     wait(20)
                 end
             end)
         end
     end,
 })
+
 
 
 local Chunker = require(game:GetService("ReplicatedStorage").Shared.Utils.Chunker)
@@ -673,8 +675,6 @@ local AlienShopToggle = BGSI:CreateToggle({
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- Config
-local DiceShopLoopInterval = 5 * 60 -- 5 minutes in seconds
 local DiceShopFireDelay = 0.5 -- 0.5 seconds between each FireServer call
 
 -- State
@@ -684,24 +684,35 @@ local DiceShopIsRunning = false
 local function StartDiceShopLoop()
     task.spawn(function()
         while DiceShopIsRunning do
+            -- Buy each item 15 times
             for diceItemId = 1, 3 do
-                for fireCount = 1, 20 do
+                for count = 1, 15 do
                     if not DiceShopIsRunning then
-                        return -- Exit immediately if toggle is off
+                        return
                     end
-                    ReplicatedStorage:WaitForChild("Shared")
-                        :WaitForChild("Framework")
-                        :WaitForChild("Network")
-                        :WaitForChild("Remote")
-                        :WaitForChild("Event")
-                        :FireServer("BuyShopItem", "dice-shop", diceItemId)
+                    ReplicatedStorage.Shared.Framework.Network.Remote.Event:FireServer(
+                        "BuyShopItem",
+                        "dice-shop",
+                        diceItemId
+                    )
                     task.wait(DiceShopFireDelay)
                 end
             end
-            task.wait(DiceShopLoopInterval)
+
+            -- Wait for either server restock or client reroll
+            while true do
+                if not DiceShopIsRunning then
+                    return
+                end
+                local eventName, data = ReplicatedStorage.Shared.Framework.Network.Remote.Event.OnClientEvent:Wait()
+                if (eventName == "ShopsRestocked" or eventName == "ShopFreeReroll") and typeof(data) == "table" and table.find(data, "dice-shop") then
+                    break
+                end
+            end
         end
     end)
 end
+
 
 -- UI
 local DiceShopToggle = BGSI:CreateToggle({ 
