@@ -748,8 +748,9 @@ local function StartClawMachineLoop()
                     for uuid, _ in pairs(data.BonusItems) do table.insert(uuids, uuid) end
                     task.spawn(function()
                         for _, uuid in ipairs(uuids) do
+			    task.wait(math.random(350, 500) / 100)
                             Event:FireServer("GrabMinigameItem", uuid)
-                            task.wait(math.random(350, 500) / 100)
+                            print("GrabMinigameItem", uuid)
                         end
                         task.wait(70)
                         game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Prompt.Visible = False
